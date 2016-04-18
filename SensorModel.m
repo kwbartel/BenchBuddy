@@ -10,9 +10,9 @@
 //#import "AnteaterREST.h"
 //#import "SettingsModel.h"
 
-#define RBL_SERVICE_UUID                         "713D0000-503E-4C75-BA94-3148F18D941E"
+/*#define RBL_SERVICE_UUID                         "713D0000-503E-4C75-BA94-3148F18D941E"
 #define RBL_CHAR_TX_UUID                         "713D0002-503E-4C75-BA94-3148F18D941E"
-#define RBL_CHAR_RX_UUID                         "713D0003-503E-4C75-BA94-3148F18D941E"
+#define RBL_CHAR_RX_UUID                         "713D0003-503E-4C75-BA94-3148F18D941E"*/
 
 @import CoreBluetooth;
 
@@ -92,6 +92,10 @@ didDiscoverCharacteristicsForService:(CBService *)service
             if ([[[c UUID] UUIDString] isEqualToString:@RBL_CHAR_TX_UUID]) {
                 [peripheral setNotifyValue:YES forCharacteristic:c];
             }
+            // TODO: put this as response to button press?
+            else if ([[[c UUID] UUIDString] isEqualToString:@RBL_CHAR_RX_UUID]) {
+                [peripheral writeValue:[@"Y" dataUsingEncoding:NSUTF8StringEncoding] forCharacteristic:c type:CBCharacteristicWriteWithoutResponse];
+            }
         }
     }
     NSLog(@"Discover characteristics for service...");
@@ -103,39 +107,20 @@ didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
              error:(NSError *)error {
     NSLog(@"Got another reading");
     // Append ASCII message to self.message
-    unsigned char data[20];
-    unsigned long data_len = MIN(20,characteristic.value.length);
+    unsigned char data[1024];
+    unsigned long data_len = MIN(1024,characteristic.value.length);
     [characteristic.value getBytes:data length:data_len];
     NSData *d = [NSData dataWithBytes:data length:data_len];
     NSString* newMessage = [[NSString alloc] initWithData:d encoding:NSUTF8StringEncoding];
     self.message = [self.message stringByAppendingString: newMessage];
     
-    // Remove error codings
-    int e_index = [self.message rangeOfString:@"E"].location;
-    if (e_index > -1)
-        self.message = [self.message stringByReplacingCharactersInRange:NSMakeRange(e_index, 2) withString:@""];
-
     // Handle completed message
     int d_index = [self.message rangeOfString:@"D"].location;
     if (d_index > -1) {
         NSString* parse = [self.message substringWithRange:NSMakeRange(0, d_index)];
         self.message = [self.message substringFromIndex:d_index+1];
-        
-        int type = 0;
-        /*if ([parse  hasPrefix: @"T"])
-            type = kTemperatureReading;
-        else if ([parse hasPrefix:@"H"])
-            type = kHumidityReading;
-                
-        if (type != 0) {
-            NSString* value = [parse substringWithRange:NSMakeRange(1, [parse length]-1)];
-            NSDate* now = [NSDate date];
-            BLESensorReading *reading = [[BLESensorReading alloc] initWithReadingValue:[value floatValue]
-                                                andType:type atTime:now andSensorId:[self currentSensorId]];
-            self.sensorReadings = [self.sensorReadings arrayByAddingObject:reading];
-            [self.delegate bleGotSensorReading:reading];
-            [AnteaterREST postListOfSensorReadings:@[reading] andCallCallback:NULL];
-        }*/
+        NSLog(parse);
+        // TODO: make SensorReading from message, add to sensorReadings
     }
 }
 
