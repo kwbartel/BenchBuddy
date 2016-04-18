@@ -8,15 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import <MessageUI/MessageUI.h>
-#import <CoreLocation/CoreLocation.h>
+#import "SensorModel.h"
+#import "SensorReading.h"
 
-typedef enum {
-    Cellular = 0,
-    WiFi = 1,
-    GPS = 2
-} LocationAccuracy;
-
-@interface ViewController : UIViewController<MFMailComposeViewControllerDelegate,CLLocationManagerDelegate>
+@interface ViewController : UIViewController<MFMailComposeViewControllerDelegate>
 
 @property IBOutlet UISegmentedControl *accuracyControl;
 @property IBOutlet UIButton *startStopButton;

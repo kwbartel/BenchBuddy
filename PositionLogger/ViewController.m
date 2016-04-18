@@ -14,7 +14,6 @@
 @end
 
 @implementation ViewController {
-    CLLocationManager *_locmgr;
     BOOL _isRecording;
     NSFileHandle *_f;
     UIAlertController *_alert;
@@ -23,24 +22,16 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    //location manager setup
-    _locmgr = [[CLLocationManager alloc] init];
-    [_locmgr requestAlwaysAuthorization];
-    _locmgr.delegate = self;
-    _locmgr.distanceFilter = kCLDistanceFilterNone;
-    //_locmgr.allowsBackgroundLocationUpdates = TRUE;
-    [_locmgr disallowDeferredLocationUpdates];
-    
-    //battery logging setup
-    [[UIDevice currentDevice] setBatteryMonitoringEnabled:TRUE];
-    //UI setup
+    // UI setup
     self.recordingIndicator.hidesWhenStopped = TRUE;
     self.startStopButton.layer.borderWidth = 1.0;
     self.startStopButton.layer.cornerRadius = 5.0;
+    
+    // Open CSV file
     _f  = [self openFileForWriting];
     if (!_f)
         NSAssert(_f,@"Couldn't open file for writing.");
-    [self logLineToDataFile:@"Time,Lat,Lon,Altitude,Accuracy,Heading,Speed,Battery\n"];
+    [self logLineToDataFile:@"Time,SensorID,AccelX,AccelY,AccelZ,GyroX,GyroY,GyroZ\n"];
     // Do any additional setup after loading the view, typically from a nib.
 }
 
@@ -50,7 +41,6 @@
     NSString *filePath = [documentsDirectory stringByAppendingPathComponent:kDATA_FILE_NAME];
     return filePath;
 }
-
 
 -(NSFileHandle *)openFileForWriting {
     NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -76,15 +66,14 @@
         NSAssert(_f,@"Couldn't open file for writing.");
 }
 
-//TODO: Implement me
--(void)startRecordingLocationWithAccuracy:(LocationAccuracy)acc {
-    [_locmgr setDesiredAccuracy: acc];
-    [_locmgr startUpdatingLocation];
-}
-
-//TODO: Implement me
--(void)stopRecordingLocationWithAccuracy {
-    [_locmgr stopUpdatingLocation];
+// Send message to peripheral to stop taking sensor readings
+-(void)saveReadingsToCSV {
+    NSArray* readings = [[SensorModel instance] sensorReadings];
+    
+    // For every reading, log formatted version to CSV
+    for (SensorReading* r in readings) {
+        [self logLineToDataFile: [r formattedValue]];
+    }
 }
 
 -(IBAction)hitRecordStopButton:(UIButton *)b {
@@ -93,14 +82,17 @@
         [b setTitle:@"Stop" forState:UIControlStateNormal];
         _isRecording = TRUE;
         [self.recordingIndicator startAnimating];
-        [self startRecordingLocationWithAccuracy:(LocationAccuracy)[self.accuracyControl selectedSegmentIndex]];
+        // TODO: tell sensor start recording
+        //CBPeripheral* p = [SensorModel instance].currentPeripheral;
+        //CBCharacteristic* c = [p discoverCharacteristics:@[@RBL_CHAR_RX_UUID] forService:@[@RBL_SERVICE_UUID]];
+        //[[SensorModel instance].currentPeripheral writeValue:[@"Y" dataUsingEncoding:NSUTF8StringEncoding] forCharacteristic:c type:CBCharacteristicWriteWithoutResponse];
     } else {
         [self.accuracyControl setEnabled:TRUE];
         [b setTitle:@"Start" forState:UIControlStateNormal];
         _isRecording = FALSE;
         [self.recordingIndicator stopAnimating];
-        [self stopRecordingLocationWithAccuracy];
-
+        // TODO: tell sensor stop recording
+        [self saveReadingsToCSV];
     }
 }
 
@@ -145,24 +137,6 @@
     [self presentViewController:mc animated:YES completion:NULL];
     
 }
-
-#pragma mark - CLLocationManagerDelegate Methods -
-
-//TODO: Implement me
-- (void)locationManager:(CLLocationManager *)manager
-     didUpdateLocations:(NSArray<CLLocation *> *)locations
-{
-    // your code goes here
-    for (CLLocation* loc in locations) {
-        [loc.timestamp timeIntervalSince1970];
-        NSString *logString = [NSString stringWithFormat:@"%@, %f, %f, %f, %f, %f, %f, %f\n",
-                               loc.timestamp, loc.coordinate.latitude, loc.coordinate.longitude, loc.altitude, loc.horizontalAccuracy, loc.course, loc.speed, [[UIDevice currentDevice] batteryLevel]];
-
-        [self logLineToDataFile: logString ];
-        NSLog(logString);
-    }
-}
-
 
 #pragma mark - MFMailComposeViewControllerDelegate Methods -
 
