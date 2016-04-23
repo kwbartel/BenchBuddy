@@ -23,7 +23,7 @@
 }
 
 -(NSString *)formattedValue {
-    NSString *accelString = [_accelReadings componentsJoinedByString:@", "];
+    NSString* accelString = [_accelReadings componentsJoinedByString:@", "];
     NSString* gyroString = [_gyroReadings componentsJoinedByString:@", "];
     NSString* label = [NSString stringWithFormat:@"%@,%@,%@,%@", _time, _sensorId, accelString, gyroString];
     return label;

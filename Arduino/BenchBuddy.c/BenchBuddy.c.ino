@@ -51,12 +51,12 @@ void setup()
   //ble_set_pins(3, 2);
 
   // Set your BLE advertising name here, max. length 10
-  ble_set_name("LeftCompanion");
+  ble_set_name("LC");
 
   // Init. and start BLE library.
   ble_begin();
 
-  
+
   // Enable serial debug
   Serial.begin(38400);
 
@@ -67,7 +67,7 @@ void setup()
   // verify connection
   Serial.println("Testing device connections...");
   Serial.println(accelgyro.testConnection() ? "MPU6050 connection successful" : "MPU6050 connection failed");
-  
+
 }
 
 void loop()
@@ -76,46 +76,44 @@ void loop()
   if (collectingData) {
     accelgyro.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
 
-    /*
-     * TEST VALUES
-      ax = 251;
-      ay = -1003;
-      az= 9532;
-      gx = 8012;
-      gy = -315;
-      gz = -606;
-    */
-    
+    //     * TEST VALUES
+   /*
+    ax = 251;
+    ay = -1003;
+    az = 9532;
+    gx = 8012;
+    gy = -315;
+    gz = -606;
+   */
 
-   //Little endian. i.e low byte first 
-    unsigned char sensorBuf[16] = {'A', ((byte *) &ax)[0] , ((byte *) &ax)[1] ,((byte *) &ay)[0] ,((byte *) &ay)[1] ,((byte *) &az)[0] , ((byte *) &az)[1] ,  'D', 
-                                 'G', ((byte *) &gx)[0] , ((byte *) &gx)[1] , ((byte *) &gy)[0] , ((byte *) &gy)[1] , ((byte *) &gz)[0]  , ((byte *) &gz)[1] , 'D'};
-    
+    //Little endian. i.e low byte first
+    unsigned char sensorBuf[16] = {'A', ((byte *) &ax)[0] , ((byte *) &ax)[1] , ((byte *) &ay)[0] , ((byte *) &ay)[1] , ((byte *) &az)[0] , ((byte *) &az)[1] ,  'D',
+                                   'G', ((byte *) &gx)[0] , ((byte *) &gx)[1] , ((byte *) &gy)[0] , ((byte *) &gy)[1] , ((byte *) &gz)[0]  , ((byte *) &gz)[1] , 'D'
+                                  };
+
     ble_write_bytes(sensorBuf, 16);
-   
-    
-    /*
-    Serial.print("a/g:\t");
-    Serial.print(ax); Serial.print("\t");
-    Serial.print(ay); Serial.print("\t");
-    Serial.print(az); Serial.print("\t");
-    Serial.print(gx); Serial.print("\t");
-    Serial.print(gy); Serial.print("\t");
-    Serial.println(gz);
-    */
 
+    /*
+      Serial.print("a/g:\t");
+      Serial.print(ax); Serial.print("\t");
+      Serial.print(ay); Serial.print("\t");
+      Serial.print(az); Serial.print("\t");
+      Serial.print(gx); Serial.print("\t");
+      Serial.print(gy); Serial.print("\t");
+      Serial.println(gz);
+    */
   }
-  
- if ( ble_connected() ) {
-   if (ble_available()) {
-     if (ble_read() == 'Y') {
-       collectingData = true;
-     } else if (ble_read() == 'N') {
-       collectingData = false;
-     }
+
+  if ( ble_connected() ) {
+    if (ble_available()) {
+      if (ble_read() == 'Y') {
+        collectingData = true;
+      } else if (ble_read() == 'N') {
+        collectingData = false;
+      }
+    }
   }
- }
-  
+
 
   ble_do_events();
   delay(500);
