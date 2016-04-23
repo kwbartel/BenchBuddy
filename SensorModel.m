@@ -113,7 +113,7 @@ didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
     NSData *d = [NSData dataWithBytes:data length:data_len];
     NSString* newMessage = [[NSString alloc] initWithData:d encoding:NSUTF8StringEncoding];
     self.message = [self.message stringByAppendingString: newMessage];
-    
+
     // Handle completed message
     int d_index = [self.message rangeOfString:@"D"].location;
     if (d_index > -1) {
