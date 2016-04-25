@@ -7,12 +7,13 @@
 //
 
 #import "SensorModel.h"
+#import "SensorReading.h"
 //#import "AnteaterREST.h"
 //#import "SettingsModel.h"
 
-/*#define RBL_SERVICE_UUID                         "713D0000-503E-4C75-BA94-3148F18D941E"
-#define RBL_CHAR_TX_UUID                         "713D0002-503E-4C75-BA94-3148F18D941E"
-#define RBL_CHAR_RX_UUID                         "713D0003-503E-4C75-BA94-3148F18D941E"*/
+#define RBL_SERVICE_UUID "713D0000-503E-4C75-BA94-3148F18D941E"
+#define RBL_CHAR_TX_UUID "713D0002-503E-4C75-BA94-3148F18D941E"
+#define RBL_CHAR_RX_UUID "713D0003-503E-4C75-BA94-3148F18D941E"
 
 @import CoreBluetooth;
 
@@ -105,24 +106,28 @@ didDiscoverCharacteristicsForService:(CBService *)service
 - (void)peripheral:(CBPeripheral *)peripheral
 didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
              error:(NSError *)error {
-    NSLog(@"Got another reading");
     // Append ASCII message to self.message
-    unsigned char data[1024];
-    unsigned long data_len = MIN(1024,characteristic.value.length);
+    unsigned char data[16];
+    unsigned long data_len = MIN(16,characteristic.value.length);
     [characteristic.value getBytes:data length:data_len];
-    NSData *d = [NSData dataWithBytes:data length:data_len];
-    NSString* newMessage = [[NSString alloc] initWithData:d encoding:NSUTF8StringEncoding];
-    self.message = [self.message stringByAppendingString: newMessage];
 
-    // Handle completed message
-    int d_index = [self.message rangeOfString:@"D"].location;
-    if (d_index > -1) {
-        NSString* parse = [self.message substringWithRange:NSMakeRange(0, d_index)];
-        self.message = [self.message substringFromIndex:d_index+1];
-        NSLog(parse);
-        // TODO: make SensorReading from message, add to sensorReadings
-    }
+    //Accelerometer data
+    short ax = data[1] | (data[2] << 8);
+    short ay = data[3] | (data[4] << 8);
+    short az = data[5] | (data[6] << 8);
+    NSArray *accelReadings = @[[NSNumber numberWithShort:ax], [NSNumber numberWithShort:ay], [NSNumber numberWithShort:az]];
+
+    //Gyroscope data
+    short gx = data[9] | (data[10] << 8);
+    short gy = data[11] | (data[12] << 8);
+    short gz = data[13] | (data[14] << 8);
+    NSArray *gyroReadings = @[[NSNumber numberWithShort:gx], [NSNumber numberWithShort:gy], [NSNumber numberWithShort:gz]];
+
+    SensorReading *reading = [[SensorReading alloc] initWithReadingsAccel:accelReadings andGyro:gyroReadings atTime: [NSDate date] andSensorId: peripheral.name];
+    _sensorReadings = [_sensorReadings arrayByAddingObject:reading];
 }
+
+
 
 -(void)startScanning {
     NSLog(@"startScanning...");

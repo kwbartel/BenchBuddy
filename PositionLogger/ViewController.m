@@ -73,6 +73,8 @@
     // For every reading, log formatted version to CSV
     for (SensorReading* r in readings) {
         [self logLineToDataFile: [r formattedValue]];
+        [self logLineToDataFile: @"\n"];
+        
     }
 }
 

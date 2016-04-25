@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C00D63831CC89D5F000AE77F /* SensorModel.m in Sources */ = {isa = PBXBuildFile; fileRef = C00D63801CC89D5F000AE77F /* SensorModel.m */; };
+		C00D63841CC89D5F000AE77F /* SensorReading.m in Sources */ = {isa = PBXBuildFile; fileRef = C00D63821CC89D5F000AE77F /* SensorReading.m */; };
 		DB278BB21C6289680083FD72 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DB278BB11C6289680083FD72 /* main.m */; };
 		DB278BB51C6289680083FD72 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = DB278BB41C6289680083FD72 /* AppDelegate.m */; };
 		DB278BB81C6289680083FD72 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DB278BB71C6289680083FD72 /* ViewController.m */; };
@@ -16,6 +18,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C00D637F1CC89D5F000AE77F /* SensorModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SensorModel.h; sourceTree = SOURCE_ROOT; };
+		C00D63801CC89D5F000AE77F /* SensorModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SensorModel.m; sourceTree = SOURCE_ROOT; };
+		C00D63811CC89D5F000AE77F /* SensorReading.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SensorReading.h; sourceTree = SOURCE_ROOT; };
+		C00D63821CC89D5F000AE77F /* SensorReading.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SensorReading.m; sourceTree = SOURCE_ROOT; };
 		DB278BAD1C6289680083FD72 /* WorkoutLogger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WorkoutLogger.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB278BB11C6289680083FD72 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		DB278BB31C6289680083FD72 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -60,6 +66,10 @@
 			children = (
 				DB278BB31C6289680083FD72 /* AppDelegate.h */,
 				DB278BB41C6289680083FD72 /* AppDelegate.m */,
+				C00D637F1CC89D5F000AE77F /* SensorModel.h */,
+				C00D63801CC89D5F000AE77F /* SensorModel.m */,
+				C00D63811CC89D5F000AE77F /* SensorReading.h */,
+				C00D63821CC89D5F000AE77F /* SensorReading.m */,
 				DB278BB61C6289680083FD72 /* ViewController.h */,
 				DB278BB71C6289680083FD72 /* ViewController.m */,
 				DB278BB91C6289680083FD72 /* Main.storyboard */,
@@ -110,7 +120,7 @@
 				TargetAttributes = {
 					DB278BAC1C6289680083FD72 = {
 						CreatedOnToolsVersion = 7.2;
-						DevelopmentTeam = R5YB232K89;
+						DevelopmentTeam = EZCPRU3M5V;
 					};
 				};
 			};
@@ -151,8 +161,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				DB278BB81C6289680083FD72 /* ViewController.m in Sources */,
+				C00D63841CC89D5F000AE77F /* SensorReading.m in Sources */,
 				DB278BB51C6289680083FD72 /* AppDelegate.m in Sources */,
 				DB278BB21C6289680083FD72 /* main.m in Sources */,
+				C00D63831CC89D5F000AE77F /* SensorModel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -267,7 +279,7 @@
 				INFOPLIST_FILE = PositionLogger/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = edu.mit.PositionLogger2;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.mit.PositionLogger3;
 				PRODUCT_NAME = WorkoutLogger;
 				PROVISIONING_PROFILE = "";
 			};
@@ -282,7 +294,7 @@
 				INFOPLIST_FILE = PositionLogger/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = edu.mit.PositionLogger2;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.mit.PositionLogger3;
 				PRODUCT_NAME = WorkoutLogger;
 				PROVISIONING_PROFILE = "";
 			};
