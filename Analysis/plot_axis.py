@@ -13,16 +13,16 @@ plt.suptitle(file)
 plot_rows = 3
 plot_cols = 1
 
-# Get values from csv, transpose so each row is different axis, subtract mean
-raw_values = df1[vars].as_matrix().T
-accel_values = raw_values - np.matrix(raw_values.mean(axis=1)).T
-n, t = accel_values.shape
+# Get values from csv, subtract mean
+raw_values = df1[vars].as_matrix()
+accel_values = raw_values - np.matrix(raw_values.mean(axis=0))
+t, n = accel_values.shape
 times = np.array(range(t))
 
 # Plot accel values, 3 plots (x, y, z) each with corresponding L/R values
 for i in range(0, n/2):
     plt.subplot(plot_rows, plot_cols, i+1)
-    plt.plot(times, np.array(accel_values[2*i].T), times, np.array(accel_values[2*i + 1].T))
+    plt.plot(times, np.array(accel_values[:, 2*i]), times, np.array(accel_values[:, 2*i + 1]))
     plt.ylabel(axis_labels[i])
 
 plt.show()
