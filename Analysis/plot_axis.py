@@ -3,40 +3,26 @@ import numpy as np
 import pandas as pd
 import math
 
-file = "bench/kwame_bench.csv"
+file = "curl/katie_curl1.csv"
 
-vars = [' RAccelX',' RAccelY',' RAccelZ']
+vars = [' RAccelX', ' LAccelX', ' RAccelY', ' LAccelY', ' RAccelZ' , ' LAccelZ']
+axis_labels = ['ax', 'ay', 'az']
 df1 = pd.read_csv(file)
-acs = {}
-font = {'family' : 'Helvetica',
-        'size'   : 12}
-plt.rc('font', **font)
-
 plt.suptitle(file)
 
-numplots = 1
-curplot = 1
+plot_rows = 3
+plot_cols = 1
 
-#plot magnitude
-a = df1[vars].as_matrix()
-ax = a[:, 0] - np.mean([a[:, 0]])
-ay = a[:, 1] - np.mean([a[:, 1]])
-az = a[:, 2] - np.mean([a[:, 2]])
-filtered_ax = filter(lambda ax: not math.isnan(ax), ax)
-filtered_ay = filter(lambda ay: not math.isnan(ay), ay)
-filtered_az = filter(lambda az: not math.isnan(az), az)
+# Get values from csv, transpose so each row is different axis, subtract mean
+raw_values = df1[vars].as_matrix().T
+accel_values = raw_values - np.matrix(raw_values.mean(axis=1)).T
+n, t = accel_values.shape
+times = np.array(range(t))
 
-
-plt.subplot(3,numplots,curplot)
-plt.plot(filtered_ax)
-plt.ylabel('filtered_ax')
-
-plt.subplot(3,numplots,curplot+1)
-plt.plot(filtered_ay)
-plt.ylabel('filtered_ay')
-
-plt.subplot(3,numplots,curplot+2)
-plt.plot(filtered_az)
-plt.ylabel('filtered_az')
+# Plot accel values, 3 plots (x, y, z) each with corresponding L/R values
+for i in range(0, n/2):
+    plt.subplot(plot_rows, plot_cols, i+1)
+    plt.plot(times, np.array(accel_values[2*i].T), times, np.array(accel_values[2*i + 1].T))
+    plt.ylabel(axis_labels[i])
 
 plt.show()
