@@ -56,7 +56,7 @@ void setup()
   // Init. and start BLE library.
   ble_begin();
 
-
+  pinMode(13, OUTPUT);
   // Enable serial debug
   Serial.begin(38400);
 
@@ -107,8 +107,10 @@ void loop()
   if ( ble_connected() ) {
     if (ble_available()) {
       if (ble_read() == 'Y') {
+        digitalWrite(13,HIGH);
         collectingData = true;
       } else if (ble_read() == 'N') {
+        digitalWrite(13,LOW);
         collectingData = false;
       }
     }
@@ -116,7 +118,7 @@ void loop()
 
 
   ble_do_events();
-  delay(500);
+  delay(100);
 }
 
 

@@ -11,9 +11,8 @@
 #import "SensorModel.h"
 #import "SensorReading.h"
 
-@interface ViewController : UIViewController<MFMailComposeViewControllerDelegate>
+@interface ViewController : UIViewController<MFMailComposeViewControllerDelegate, SensorModelDelegate>
 
-@property IBOutlet UISegmentedControl *accuracyControl;
 @property IBOutlet UIButton *startStopButton;
 @property IBOutlet UIActivityIndicatorView *recordingIndicator;
 

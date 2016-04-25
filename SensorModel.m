@@ -14,6 +14,7 @@
 #define RBL_SERVICE_UUID "713D0000-503E-4C75-BA94-3148F18D941E"
 #define RBL_CHAR_TX_UUID "713D0002-503E-4C75-BA94-3148F18D941E"
 #define RBL_CHAR_RX_UUID "713D0003-503E-4C75-BA94-3148F18D941E"
+#define MAX_PERIPHERALS 2
 
 @import CoreBluetooth;
 
@@ -30,6 +31,11 @@ static id _instance;
         self.shouldScan = false;
         self.message = @"";
         self.sensorReadings = [[NSArray alloc] init];
+        self.leftSensorReadings = [[NSArray alloc] init];
+        self.rightSensorReadings = [[NSArray alloc] init];
+        self.peripherals = [[NSMutableArray alloc] init];
+        self.rxCharacteristics = [[NSMutableArray alloc] init];
+        self.readyPeripherals = 0;
     }
     return self;
 }
@@ -45,16 +51,22 @@ static id _instance;
 -(void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(nonnull CBPeripheral *)peripheral advertisementData:(NSDictionary<NSString *, id> *)advertisementData RSSI:(NSNumber *)RSSI {
     self.currentPeripheral = peripheral;
     peripheral.delegate = self;
-    [central connectPeripheral:peripheral
-                       options:[NSDictionary
-                                dictionaryWithObject:[NSNumber numberWithBool:YES]
-                                forKey:CBConnectPeripheralOptionNotifyOnDisconnectionKey]];
+    [self.peripherals addObject: peripheral];
+    
+    if ([self.peripherals count] == MAX_PERIPHERALS) {
+        for (int i = 0; i < [self.peripherals count]; i++) {
+            [central connectPeripheral: self.peripherals[i]
+                               options:[NSDictionary
+                                        dictionaryWithObject:[NSNumber numberWithBool:YES]
+                                        forKey:CBConnectPeripheralOptionNotifyOnDisconnectionKey]];
+        }
+    }
+
     NSLog(@"didDiscoverPeripheral...");
 }
 
 // Task 3
 - (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral {
-    [self.delegate bleDidConnect];
     [peripheral discoverServices:nil];
     NSLog(@"didConnectPeripheral...");
 }
@@ -62,9 +74,9 @@ static id _instance;
 - (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral
                  error:(NSError *)error {
     self.currentPeripheral = nil;
-    self.sensorReadings = [[NSArray alloc] init];
+    [self.peripherals removeObject:peripheral];
+    //self.sensorReadings = [[NSArray alloc] init];
     self.message = @"";
-    [self.delegate bleDidDisconnect];
     [central scanForPeripheralsWithServices:[NSArray arrayWithObject:[CBUUID UUIDWithString:@RBL_SERVICE_UUID]] options:nil];
     NSLog(@"didDisconnectPeripheral...");
 }
@@ -72,6 +84,7 @@ static id _instance;
 - (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral
                  error:(NSError *)error {
     self.currentPeripheral = nil;
+    [self.peripherals removeObject:peripheral];
     NSLog(@"didFailToConnectPeripheral...");
 }
 
@@ -93,13 +106,36 @@ didDiscoverCharacteristicsForService:(CBService *)service
             if ([[[c UUID] UUIDString] isEqualToString:@RBL_CHAR_TX_UUID]) {
                 [peripheral setNotifyValue:YES forCharacteristic:c];
             }
-            // TODO: put this as response to button press?
-            else if ([[[c UUID] UUIDString] isEqualToString:@RBL_CHAR_RX_UUID]) {
-                [peripheral writeValue:[@"Y" dataUsingEncoding:NSUTF8StringEncoding] forCharacteristic:c type:CBCharacteristicWriteWithoutResponse];
+            //if ([[[c UUID] UUIDString] isEqualToString:@RBL_CHAR_RX_UUID]) {
+              //  [peripheral writeValue:[@"Y" dataUsingEncoding:NSUTF8StringEncoding] forCharacteristic:c type:CBCharacteristicWriteWithoutResponse];
+            //}
+            /*
+            if ([[[c UUID] UUIDString] isEqualToString:@RBL_CHAR_RX_UUID]) {
+                [self.rxCharacteristics addObject: c];
             }
+             */
         }
+        self.readyPeripherals += 1;
+    }
+    if (self.readyPeripherals == MAX_PERIPHERALS) {
+        [self.delegate peripheralsReadyForDataCollection];
     }
     NSLog(@"Discover characteristics for service...");
+}
+
+- (void) sendSignal :(NSString*) signal {
+    //CBPeripheral *peripheral = self.peripherals[0];
+    for (CBPeripheral *peripheral in self.peripherals) {
+        for (CBService * service in peripheral.services) {
+            if ([[[service UUID] UUIDString] isEqualToString:@RBL_SERVICE_UUID]) {
+                for (CBCharacteristic *c in service.characteristics) {
+                    if ([[[c UUID] UUIDString] isEqualToString:@RBL_CHAR_RX_UUID]) {
+                        [peripheral writeValue:[signal dataUsingEncoding:NSUTF8StringEncoding] forCharacteristic:c type:CBCharacteristicWriteWithoutResponse];
+                    }
+                }
+            }
+       }
+    }
 }
 
 // Task 5
@@ -107,27 +143,32 @@ didDiscoverCharacteristicsForService:(CBService *)service
 didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
              error:(NSError *)error {
     // Append ASCII message to self.message
-    unsigned char data[16];
-    unsigned long data_len = MIN(16,characteristic.value.length);
-    [characteristic.value getBytes:data length:data_len];
+    if (self.readyPeripherals == MAX_PERIPHERALS ) {
+        unsigned char data[16];
+        unsigned long data_len = MIN(16,characteristic.value.length);
+        [characteristic.value getBytes:data length:data_len];
     
-    //Accelerometer data
-    short ax = data[1] | (data[2] << 8);
-    short ay = data[3] | (data[4] << 8);
-    short az = data[5] | (data[6] << 8);
-    NSArray *accelReadings = @[[NSNumber numberWithShort:ax], [NSNumber numberWithShort:ay], [NSNumber numberWithShort:az]];
+        //Accelerometer data
+        short ax = data[1] | (data[2] << 8);
+        short ay = data[3] | (data[4] << 8);
+        short az = data[5] | (data[6] << 8);
+        NSArray *accelReadings = @[[NSNumber numberWithShort:ax], [NSNumber numberWithShort:ay], [NSNumber numberWithShort:az]];
     
-    //Gyroscope data
-    short gx = data[9] | (data[10] << 8);
-    short gy = data[11] | (data[12] << 8);
-    short gz = data[13] | (data[14] << 8);
-    NSArray *gyroReadings = @[[NSNumber numberWithShort:gx], [NSNumber numberWithShort:gy], [NSNumber numberWithShort:gz]];
+        //Gyroscope data
+        short gx = data[9] | (data[10] << 8);
+        short gy = data[11] | (data[12] << 8);
+        short gz = data[13] | (data[14] << 8);
+        NSArray *gyroReadings = @[[NSNumber numberWithShort:gx], [NSNumber numberWithShort:gy], [NSNumber numberWithShort:gz]];
 
-    SensorReading *reading = [[SensorReading alloc] initWithReadingsAccel:accelReadings andGyro:gyroReadings atTime: [NSDate date] andSensorId: peripheral.name];
-    _sensorReadings = [_sensorReadings arrayByAddingObject:reading];
+        SensorReading *reading = [[SensorReading alloc] initWithReadingsAccel:accelReadings andGyro:gyroReadings atTime: [NSDate date] andSensorId: peripheral.name];
+        if ([reading.sensorId isEqualToString:@"LC"]) {
+            _leftSensorReadings = [_leftSensorReadings arrayByAddingObject:reading];
+        } else if ([reading.sensorId isEqualToString:@"RC"]) {
+            _rightSensorReadings = [_rightSensorReadings arrayByAddingObject:reading];
+        }
+        _sensorReadings = [_sensorReadings arrayByAddingObject:reading];
+    }
 }
-
-
 
 -(void)startScanning {
     NSLog(@"startScanning...");
@@ -146,7 +187,6 @@ didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
 -(NSString *)currentSensorId {
     return self.currentPeripheral.name;
 }
-
 
 +(SensorModel *) instance {
     if (!_instance) {

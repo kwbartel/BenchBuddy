@@ -21,18 +21,27 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [SensorModel instance].delegate = self;
     
     // UI setup
     self.recordingIndicator.hidesWhenStopped = TRUE;
     self.startStopButton.layer.borderWidth = 1.0;
     self.startStopButton.layer.cornerRadius = 5.0;
+
+    [self.startStopButton setEnabled: NO];
     
     // Open CSV file
     _f  = [self openFileForWriting];
     if (!_f)
         NSAssert(_f,@"Couldn't open file for writing.");
-    [self logLineToDataFile:@"Time,SensorID,AccelX,AccelY,AccelZ,GyroX,GyroY,GyroZ\n"];
+    [self logLineToDataFile:@"LTime, LSensorID, LAccelX, LAccelY, LAccelZ, LGyroX, LGyroY, LGyroZ,"];
+    [self logLineToDataFile:@"RTime, RSensorID, RAccelX, RAccelY, RAccelZ, RGyroX, RGyroY, RGyroZ, \n"];
     // Do any additional setup after loading the view, typically from a nib.
+}
+
+// Delegate method
+- (void) peripheralsReadyForDataCollection {
+    [self.startStopButton setEnabled: YES];
 }
 
 -(NSString *)getPathToLogFile {
@@ -69,32 +78,47 @@
 // Send message to peripheral to stop taking sensor readings
 -(void)saveReadingsToCSV {
     NSArray* readings = [[SensorModel instance] sensorReadings];
+    NSArray* leftReadings = [[SensorModel instance] leftSensorReadings];
+    NSArray* rightReadings = [[SensorModel instance] rightSensorReadings];
     
+    long length = MIN([leftReadings count], [rightReadings count]);
+    
+    for (int i = 0; i < length; i++)
+    {
+        SensorReading* leftReading = leftReadings[i];
+        SensorReading* rightReading = rightReadings[i];
+        [self logLineToDataFile: [leftReading formattedValue]];
+        [self logLineToDataFile:@","];
+        [self logLineToDataFile: [rightReading formattedValue]];
+        
+        [self logLineToDataFile: @"\n"];
+    }
+    
+    /*
     // For every reading, log formatted version to CSV
     for (SensorReading* r in readings) {
         [self logLineToDataFile: [r formattedValue]];
         [self logLineToDataFile: @"\n"];
         
     }
+     */
 }
 
 -(IBAction)hitRecordStopButton:(UIButton *)b {
     if (!_isRecording) {
-        [self.accuracyControl setEnabled:FALSE];
         [b setTitle:@"Stop" forState:UIControlStateNormal];
         _isRecording = TRUE;
         [self.recordingIndicator startAnimating];
-        // TODO: tell sensor start recording
-        //CBPeripheral* p = [SensorModel instance].currentPeripheral;
-        //CBCharacteristic* c = [p discoverCharacteristics:@[@RBL_CHAR_RX_UUID] forService:@[@RBL_SERVICE_UUID]];
-        //[[SensorModel instance].currentPeripheral writeValue:[@"Y" dataUsingEncoding:NSUTF8StringEncoding] forCharacteristic:c type:CBCharacteristicWriteWithoutResponse];
+        [[SensorModel instance] sendSignal: @"Y"];
+        
     } else {
-        [self.accuracyControl setEnabled:TRUE];
         [b setTitle:@"Start" forState:UIControlStateNormal];
         _isRecording = FALSE;
+        [[SensorModel instance] sendSignal:@"N"];
         [self.recordingIndicator stopAnimating];
         // TODO: tell sensor stop recording
         [self saveReadingsToCSV];
+        
     }
 }
 
