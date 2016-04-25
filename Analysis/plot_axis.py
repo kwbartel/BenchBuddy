@@ -5,13 +5,15 @@ import math
 
 file = "curl/katie_curl1.csv"
 
-vars = [' RAccelX', ' LAccelX', ' RAccelY', ' LAccelY', ' RAccelZ' , ' LAccelZ']
-axis_labels = ['ax', 'ay', 'az']
+vars = [' RAccelX', ' LAccelX', ' RGyroX', ' LGyroX',
+        ' RAccelY', ' LAccelY', ' RGyroY', ' LGyroY',
+        ' RAccelZ', ' LAccelZ', ' RGyroZ', ' LGyroZ', ]
+axis_labels = ['ax', 'gx', 'ay', 'gy', 'az', 'gz']
 df1 = pd.read_csv(file)
 plt.suptitle(file)
 
 plot_rows = 3
-plot_cols = 1
+plot_cols = 2
 
 # Get values from csv, subtract mean
 raw_values = df1[vars].as_matrix()
