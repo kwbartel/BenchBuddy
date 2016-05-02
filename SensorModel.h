@@ -19,6 +19,7 @@
 @protocol SensorModelDelegate <NSObject>
 
 -(void) peripheralsReadyForDataCollection;
+-(void) peripheralDisconnected;
 //-(void) bleGotSensorReading:(BLESensorReading*)reading;
 
 @end

@@ -9,6 +9,7 @@
 #import "ViewController.h"
 
 #define kDATA_FILE_NAME @"log.csv"
+#define kDATES_FILE_NAME @"exerciseEndTimes.json"
 
 @interface ViewController ()
 @end
@@ -17,6 +18,7 @@
     BOOL _isRecording;
     NSFileHandle *_f;
     UIAlertController *_alert;
+    NSMutableDictionary *_exerciseEndDateMap;
 }
 
 - (void)viewDidLoad {
@@ -27,11 +29,18 @@
     self.recordingIndicator.hidesWhenStopped = TRUE;
     self.startStopButton.layer.borderWidth = 1.0;
     self.startStopButton.layer.cornerRadius = 5.0;
-
     [self.startStopButton setEnabled: NO];
     
-    // Open CSV file
+    self.endWorkoutButton.layer.borderWidth = 1.0;
+    self.endWorkoutButton.layer.cornerRadius = 5.0;
+    [self.endWorkoutButton setEnabled: NO];
+    
+    //Open CSV file
     _f  = [self openFileForWriting];
+    
+    //Initialize exercise to end time map
+    _exerciseEndDateMap  = [[NSMutableDictionary alloc] init];
+    
     if (!_f)
         NSAssert(_f,@"Couldn't open file for writing.");
     [self logLineToDataFile:@"LTime, LSensorID, LAccelX, LAccelY, LAccelZ, LGyroX, LGyroY, LGyroZ,"];
@@ -42,6 +51,10 @@
 // Delegate method
 - (void) peripheralsReadyForDataCollection {
     [self.startStopButton setEnabled: YES];
+}
+
+- (void) peripheralDisconnected {
+    [self.startStopButton setEnabled: NO];
 }
 
 -(NSString *)getPathToLogFile {
@@ -73,6 +86,7 @@
     _f = [self openFileForWriting];
     if (!_f)
         NSAssert(_f,@"Couldn't open file for writing.");
+    
 }
 
 // Send message to peripheral to stop taking sensor readings
@@ -90,18 +104,21 @@
         [self logLineToDataFile: [leftReading formattedValue]];
         [self logLineToDataFile:@","];
         [self logLineToDataFile: [rightReading formattedValue]];
-        
         [self logLineToDataFile: @"\n"];
     }
-    
+
     /*
     // For every reading, log formatted version to CSV
     for (SensorReading* r in readings) {
         [self logLineToDataFile: [r formattedValue]];
         [self logLineToDataFile: @"\n"];
         
-    }
-     */
+    }*/
+}
+
+- (IBAction)endWorkoutButton:(UIButton *)sender {
+    [self saveReadingsToCSV];
+    [self.endWorkoutButton setEnabled:NO];
 }
 
 -(IBAction)hitRecordStopButton:(UIButton *)b {
@@ -110,20 +127,29 @@
         _isRecording = TRUE;
         [self.recordingIndicator startAnimating];
         [[SensorModel instance] sendSignal: @"Y"];
-        
+        [self.endWorkoutButton setEnabled:NO];
     } else {
         [b setTitle:@"Start" forState:UIControlStateNormal];
         _isRecording = FALSE;
-        [[SensorModel instance] sendSignal:@"N"];
         [self.recordingIndicator stopAnimating];
-        // TODO: tell sensor stop recording
-        [self saveReadingsToCSV];
+        [[SensorModel instance] sendSignal: @"N"];
+        [self.endWorkoutButton setEnabled:YES];
+        
+        NSDate *currDate = [NSDate date];
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc]init];
+        [dateFormatter setDateFormat:@"yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS'Z'"];
+        NSString *dateString = [dateFormatter stringFromDate:currDate];
+        
+        [_exerciseEndDateMap setValue:dateString forKey:[self.exerciseName text]];
+        self.exerciseName.text = @"";
         
     }
 }
 
+
 -(IBAction)hitClearButton:(UIButton *)b {
     [self resetLogFile];
+    [_exerciseEndDateMap removeAllObjects];
 }
 
 -(IBAction)emailLogFile:(UIButton *)b {
@@ -140,7 +166,11 @@
         return;
     }
     NSData *fileData = [NSData dataWithContentsOfFile:[self getPathToLogFile]];
-
+    //NSData *timesData = [NSKeyedArchiver archivedDataWithRootObject:_exerciseEndDateMap];
+    
+    NSError *error;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:_exerciseEndDateMap options: NSJSONWritingPrettyPrinted error:&error];
+    
     if (!fileData || [fileData length] == 0)
         return;
     NSString *emailTitle = @"Position File";
@@ -151,13 +181,16 @@
     [mc setSubject:emailTitle];
     [mc setMessageBody:messageBody isHTML:NO];
     
-    
-    
     // Determine the MIME type
     NSString *mimeType = @"text/plain";
     
+    //MIME type for secondary data
+    NSString *timesMimeType  = @"application/javascript";
+    
     // Add attachment
     [mc addAttachmentData:fileData mimeType:mimeType fileName:kDATA_FILE_NAME];
+    
+    [mc addAttachmentData:jsonData mimeType:timesMimeType fileName:kDATES_FILE_NAME];
     
     // Present mail view controller on screen
     [self presentViewController:mc animated:YES completion:NULL];

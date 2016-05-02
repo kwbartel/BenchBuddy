@@ -18,11 +18,10 @@
 
 @import CoreBluetooth;
 
-
 static id _instance;
 @implementation SensorModel {
-}
 
+}
 
 -(id) init {
     self = [super init];
@@ -52,21 +51,22 @@ static id _instance;
     self.currentPeripheral = peripheral;
     peripheral.delegate = self;
     [self.peripherals addObject: peripheral];
-    
     if ([self.peripherals count] == MAX_PERIPHERALS) {
+    NSArray* connectedPeripherals =  [central retrieveConnectedPeripheralsWithServices:[NSArray arrayWithObject:[CBUUID UUIDWithString:@RBL_SERVICE_UUID]]];
         for (int i = 0; i < [self.peripherals count]; i++) {
-            [central connectPeripheral: self.peripherals[i]
-                               options:[NSDictionary
-                                        dictionaryWithObject:[NSNumber numberWithBool:YES]
-                                        forKey:CBConnectPeripheralOptionNotifyOnDisconnectionKey]];
+            if (![connectedPeripherals containsObject:peripheral]) {
+                [central connectPeripheral: self.peripherals[i]
+                                   options:[NSDictionary
+                                            dictionaryWithObject:[NSNumber numberWithBool:YES]
+                                            forKey:CBConnectPeripheralOptionNotifyOnDisconnectionKey]];
+            }
         }
     }
-
     NSLog(@"didDiscoverPeripheral...");
 }
 
 // Task 3
-- (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral {
+- (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *) peripheral {
     [peripheral discoverServices:nil];
     NSLog(@"didConnectPeripheral...");
 }
@@ -75,14 +75,16 @@ static id _instance;
                  error:(NSError *)error {
     self.currentPeripheral = nil;
     [self.peripherals removeObject:peripheral];
-    //self.sensorReadings = [[NSArray alloc] init];
-    self.message = @"";
+    [self sendSignal:@"N"];
+    if (self.readyPeripherals > 0) {
+        self.readyPeripherals--;
+    }
+    [self.delegate peripheralDisconnected];
     [central scanForPeripheralsWithServices:[NSArray arrayWithObject:[CBUUID UUIDWithString:@RBL_SERVICE_UUID]] options:nil];
     NSLog(@"didDisconnectPeripheral...");
 }
 
-- (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral
-                 error:(NSError *)error {
+- (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
     self.currentPeripheral = nil;
     [self.peripherals removeObject:peripheral];
     NSLog(@"didFailToConnectPeripheral...");
@@ -96,8 +98,8 @@ static id _instance;
     }
 }
 
-//Taskl 4 (b)
-- (void)peripheral:(CBPeripheral *)peripheral
+//Taskl 4(b)
+- (void) peripheral:(CBPeripheral *)peripheral
 didDiscoverCharacteristicsForService:(CBService *)service
              error:(NSError *)error {
     NSLog(@"didDiscoverIncludedServicesForService...");
@@ -106,20 +108,13 @@ didDiscoverCharacteristicsForService:(CBService *)service
             if ([[[c UUID] UUIDString] isEqualToString:@RBL_CHAR_TX_UUID]) {
                 [peripheral setNotifyValue:YES forCharacteristic:c];
             }
-            //if ([[[c UUID] UUIDString] isEqualToString:@RBL_CHAR_RX_UUID]) {
-              //  [peripheral writeValue:[@"Y" dataUsingEncoding:NSUTF8StringEncoding] forCharacteristic:c type:CBCharacteristicWriteWithoutResponse];
-            //}
-            /*
-            if ([[[c UUID] UUIDString] isEqualToString:@RBL_CHAR_RX_UUID]) {
-                [self.rxCharacteristics addObject: c];
-            }
-             */
         }
         self.readyPeripherals += 1;
+        if (self.readyPeripherals == MAX_PERIPHERALS) {
+            [self.delegate peripheralsReadyForDataCollection];
+        }
     }
-    if (self.readyPeripherals == MAX_PERIPHERALS) {
-        [self.delegate peripheralsReadyForDataCollection];
-    }
+    
     NSLog(@"Discover characteristics for service...");
 }
 
@@ -134,7 +129,7 @@ didDiscoverCharacteristicsForService:(CBService *)service
                     }
                 }
             }
-       }
+        }
     }
 }
 
