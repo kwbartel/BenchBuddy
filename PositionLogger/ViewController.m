@@ -156,9 +156,6 @@
             NSArray* tmpLeftReadings = [[SensorModel instance] tmpLeftSensorReadings];
             NSArray* tmpRightReadings = [[SensorModel instance] tmpRightSensorReadings];
             
-            NSLog(@"%@", tmpLeftReadings);
-            NSLog(@"%@", tmpRightReadings);
-            
             [[[SensorModel instance] leftSensorReadings] addObjectsFromArray:tmpLeftReadings];
             
             [[[SensorModel instance] rightSensorReadings] addObjectsFromArray:tmpRightReadings];

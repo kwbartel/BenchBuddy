@@ -9,8 +9,8 @@ from dateutil.parser import parse
 
 # Get values from csv, put into raw_values
 file = "curl/katie_curl1.csv"
-exerciseEndTimesPath = "TrainingData/2/ExerciseEndTimes.json"
-workoutPath = "TrainingData/2/Workout.csv"
+exerciseEndTimesPath = "TrainingData/Test/ExerciseEndTimes.json"
+workoutPath = "TrainingData/Test/Workout.csv"
 
 vars = [' RAccelX', ' LAccelX', ' RGyroX', ' LGyroX',
         ' RAccelY', ' LAccelY', ' RGyroY', ' LGyroY',
@@ -74,7 +74,7 @@ raw_values = df1[vars].as_matrix()
 sum = 0 
 for exercise in exerciseRawValueMap.keys():
   sum += len(exerciseRawValueMap[exercise])
-
+print sum 
 #print exerciseRawValueMap['TricepExtensionsLow']
 
 # # Set up plotting variables
