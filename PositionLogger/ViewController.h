@@ -17,6 +17,7 @@
 @property IBOutlet UIActivityIndicatorView *recordingIndicator;
 @property (weak, nonatomic) IBOutlet UIButton *endWorkoutButton;
 @property (weak, nonatomic) IBOutlet UITextField *exerciseName;
+@property (weak, nonatomic) IBOutlet UISwitch *includeExercise;
 
 
 -(IBAction)endWorkoutButton:(UIButton *)sender;

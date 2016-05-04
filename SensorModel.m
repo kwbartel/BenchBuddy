@@ -20,7 +20,6 @@
 
 static id _instance;
 @implementation SensorModel {
-
 }
 
 -(id) init {
@@ -30,8 +29,13 @@ static id _instance;
         self.shouldScan = false;
         self.message = @"";
         self.sensorReadings = [[NSArray alloc] init];
-        self.leftSensorReadings = [[NSArray alloc] init];
-        self.rightSensorReadings = [[NSArray alloc] init];
+        
+        self.leftSensorReadings = [[NSMutableArray alloc] init];
+        self.rightSensorReadings = [[NSMutableArray alloc] init];
+        
+        self.tmpLeftSensorReadings = [[NSMutableArray alloc] init];
+        self.tmpRightSensorReadings = [[NSMutableArray alloc] init];
+        
         self.peripherals = [[NSMutableArray alloc] init];
         self.rxCharacteristics = [[NSMutableArray alloc] init];
         self.readyPeripherals = 0;
@@ -54,7 +58,7 @@ static id _instance;
     if ([self.peripherals count] == MAX_PERIPHERALS) {
     NSArray* connectedPeripherals =  [central retrieveConnectedPeripheralsWithServices:[NSArray arrayWithObject:[CBUUID UUIDWithString:@RBL_SERVICE_UUID]]];
         for (int i = 0; i < [self.peripherals count]; i++) {
-            if (![connectedPeripherals containsObject:peripheral]) {
+            if (![connectedPeripherals containsObject:self.peripherals[i]]) {
                 [central connectPeripheral: self.peripherals[i]
                                    options:[NSDictionary
                                             dictionaryWithObject:[NSNumber numberWithBool:YES]
@@ -75,11 +79,11 @@ static id _instance;
                  error:(NSError *)error {
     self.currentPeripheral = nil;
     [self.peripherals removeObject:peripheral];
-    [self sendSignal:@"N"];
+    
     if (self.readyPeripherals > 0) {
         self.readyPeripherals--;
     }
-    [self.delegate peripheralDisconnected];
+    [self.delegate peripheralsForceDisconnected];
     [central scanForPeripheralsWithServices:[NSArray arrayWithObject:[CBUUID UUIDWithString:@RBL_SERVICE_UUID]] options:nil];
     NSLog(@"didDisconnectPeripheral...");
 }
@@ -154,12 +158,15 @@ didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
         short gy = data[11] | (data[12] << 8);
         short gz = data[13] | (data[14] << 8);
         NSArray *gyroReadings = @[[NSNumber numberWithShort:gx], [NSNumber numberWithShort:gy], [NSNumber numberWithShort:gz]];
-
+        NSDate* date = [NSDate date];
         SensorReading *reading = [[SensorReading alloc] initWithReadingsAccel:accelReadings andGyro:gyroReadings atTime: [NSDate date] andSensorId: peripheral.name];
+        
         if ([reading.sensorId isEqualToString:@"LC"]) {
-            _leftSensorReadings = [_leftSensorReadings arrayByAddingObject:reading];
+           // _leftSensorReadings = [_leftSensorReadings arrayByAddingObject:reading];
+            [_tmpLeftSensorReadings addObject:reading];
         } else if ([reading.sensorId isEqualToString:@"RC"]) {
-            _rightSensorReadings = [_rightSensorReadings arrayByAddingObject:reading];
+            //_rightSensorReadings = [_rightSensorReadings arrayByAddingObject:reading];
+            [_tmpRightSensorReadings addObject:reading];
         }
         _sensorReadings = [_sensorReadings arrayByAddingObject:reading];
     }

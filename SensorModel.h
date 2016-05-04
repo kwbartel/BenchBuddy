@@ -19,7 +19,7 @@
 @protocol SensorModelDelegate <NSObject>
 
 -(void) peripheralsReadyForDataCollection;
--(void) peripheralDisconnected;
+- (void) peripheralsForceDisconnected;
 //-(void) bleGotSensorReading:(BLESensorReading*)reading;
 
 @end
@@ -30,8 +30,12 @@
 
 @property(atomic,strong) id<SensorModelDelegate> delegate;
 @property(atomic) NSArray *sensorReadings;
-@property(atomic) NSArray *leftSensorReadings;
-@property(atomic) NSArray *rightSensorReadings;
+@property(atomic) NSMutableArray *leftSensorReadings;
+@property(atomic) NSMutableArray *rightSensorReadings;
+
+@property NSMutableArray *tmpLeftSensorReadings;
+@property NSMutableArray *tmpRightSensorReadings;
+
 @property NSMutableArray *peripherals;
 @property NSMutableArray *rxCharacteristics;
 @property CBCentralManager* CM;

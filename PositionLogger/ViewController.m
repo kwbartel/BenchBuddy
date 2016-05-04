@@ -48,12 +48,29 @@
     // Do any additional setup after loading the view, typically from a nib.
 }
 
-// Delegate method
+// Delegate methods
 - (void) peripheralsReadyForDataCollection {
     [self.startStopButton setEnabled: YES];
 }
 
-- (void) peripheralDisconnected {
+
+/* If one or both peripherals disconnect
+        => Tell all peripherals to stop collecting data
+        => Clear all sensor readings that were taken for the current exercise
+        => Reset UI
+*/
+- (void) peripheralsForceDisconnected {
+    [self.startStopButton setTitle:@"Start" forState:UIControlStateNormal];
+    _isRecording = FALSE;
+    [self.recordingIndicator stopAnimating];
+    [[SensorModel instance] sendSignal: @"N"];
+    [self.endWorkoutButton setEnabled:YES];
+    
+    [[[SensorModel instance] tmpLeftSensorReadings] removeAllObjects];
+    [[[SensorModel instance] tmpRightSensorReadings] removeAllObjects];
+    
+    self.exerciseName.text = @"";
+    
     [self.startStopButton setEnabled: NO];
 }
 
@@ -91,7 +108,7 @@
 
 // Send message to peripheral to stop taking sensor readings
 -(void)saveReadingsToCSV {
-    NSArray* readings = [[SensorModel instance] sensorReadings];
+    //NSArray* readings = [[SensorModel instance] sensorReadings];
     NSArray* leftReadings = [[SensorModel instance] leftSensorReadings];
     NSArray* rightReadings = [[SensorModel instance] rightSensorReadings];
     
@@ -106,13 +123,11 @@
         [self logLineToDataFile: [rightReading formattedValue]];
         [self logLineToDataFile: @"\n"];
     }
-
     /*
     // For every reading, log formatted version to CSV
     for (SensorReading* r in readings) {
         [self logLineToDataFile: [r formattedValue]];
         [self logLineToDataFile: @"\n"];
-        
     }*/
 }
 
@@ -135,12 +150,30 @@
         [[SensorModel instance] sendSignal: @"N"];
         [self.endWorkoutButton setEnabled:YES];
         
-        NSDate *currDate = [NSDate date];
-        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc]init];
-        [dateFormatter setDateFormat:@"yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS'Z'"];
-        NSString *dateString = [dateFormatter stringFromDate:currDate];
+        if ([self.includeExercise isOn]) {
+            
+            //NSDate *currDate = [NSDate date];
+            NSArray* tmpLeftReadings = [[SensorModel instance] tmpLeftSensorReadings];
+            NSArray* tmpRightReadings = [[SensorModel instance] tmpRightSensorReadings];
+            
+            NSLog(@"%@", tmpLeftReadings);
+            NSLog(@"%@", tmpRightReadings);
+            
+            [[[SensorModel instance] leftSensorReadings] addObjectsFromArray:tmpLeftReadings];
+            
+            [[[SensorModel instance] rightSensorReadings] addObjectsFromArray:tmpRightReadings];
+            
+            NSDate *currDate = [[tmpLeftReadings lastObject] time];
+            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+            [dateFormatter setDateFormat:@"yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS'Z'"];
+            NSString *dateString = [dateFormatter stringFromDate:currDate];
+            
+            [_exerciseEndDateMap setValue:dateString forKey:[self.exerciseName text]];
+        }
         
-        [_exerciseEndDateMap setValue:dateString forKey:[self.exerciseName text]];
+        [[[SensorModel instance] tmpLeftSensorReadings] removeAllObjects];
+        [[[SensorModel instance] tmpRightSensorReadings] removeAllObjects];
+        
         self.exerciseName.text = @"";
         
     }
