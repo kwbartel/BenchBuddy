@@ -36,9 +36,10 @@ for i in index_shuf:
     labels_shuf.append(labels[i])
 
 # Split data into train and test
-print len(files)
+print len(files), "data files"
 split = .7 # Fraction of data set to use as training
 split_idx = int(len(files) * split)
+print split_idx, "used for training"
 train_files = files_shuf[:split_idx]
 train_classes = labels_shuf[:split_idx]
 test_files = files_shuf[split_idx:]
@@ -122,20 +123,19 @@ def make_features(csv_files, save_graphs=False):
 
     return metrics
 
-# get features for training set
+# get features for training set, train CLF on features
 train_features = make_features(train_files)
-
-#train decision tree classifier on data
 clf = DecisionTreeClassifier(random_state=0,max_depth=3)
 clf.fit(train_features, train_classes)
 
-# get test set results
+# get test set features and predictions
 test_features = make_features(test_files)
-print test_classes
-print clf.predict(test_features)
+predictions = clf.predict(test_features)
+correct = np.sum(np.equal(test_classes, predictions)) / float(len(test_classes))
+print correct, "accuracy rate"
 
 # confusion matrix
-cm = confusion_matrix(test_classes,clf.predict(test_features))
+cm = confusion_matrix(test_classes, predictions)
 print cm
 
 # save CLF tree
