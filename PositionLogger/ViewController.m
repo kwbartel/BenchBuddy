@@ -102,7 +102,8 @@
     _f = [self openFileForWriting];
     if (!_f)
         NSAssert(_f,@"Couldn't open file for writing.");
-    
+    [self logLineToDataFile:@"LTime, LSensorID, LAccelX, LAccelY, LAccelZ, LGyroX, LGyroY, LGyroZ,"];
+    [self logLineToDataFile:@"RTime, RSensorID, RAccelX, RAccelY, RAccelZ, RGyroX, RGyroY, RGyroZ, \n"];
 }
 
 // Send message to peripheral to stop taking sensor readings
@@ -178,7 +179,10 @@
 
 -(IBAction)hitClearButton:(UIButton *)b {
     [self resetLogFile];
+    [[[SensorModel instance] leftSensorReadings] removeAllObjects];
+    [[[SensorModel instance] rightSensorReadings] removeAllObjects];
     [_exerciseEndDateMap removeAllObjects];
+    
 }
 
 -(IBAction)emailLogFile:(UIButton *)b {
