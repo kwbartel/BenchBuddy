@@ -10,7 +10,7 @@ from dateutil.parser import parse
 # Get values from csv, put into raw_values
 
 
-testSubjectId = "5"
+testSubjectId = "3"
 
 file = "curl/katie_curl1.csv"
 exerciseEndTimesPath = "TrainingData/" + testSubjectId + "/ExerciseEndTimes.json"
@@ -74,8 +74,6 @@ sum = 0
 for exercise in exerciseRawValueMap.keys():
   sum += len(exerciseRawValueMap[exercise])
 print sum
-
-
 
 axis_labels = ['ax', 'gx', 'ay', 'gy', 'az', 'gz']
 

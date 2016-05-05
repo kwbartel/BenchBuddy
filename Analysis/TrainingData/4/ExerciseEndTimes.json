@@ -8,10 +8,10 @@
   "BenchHigh" : "2016-05-03T16:27:34.751Z",
   "BenchMedium" : "2016-05-03T16:25:18.745Z",
   "CurlHigh" : "2016-05-03T16:40:06.021Z",
-  "TricepLow" : "2016-05-03T16:41:47.134Z",
-  "TricepMedium" : "2016-05-03T16:43:33.955Z",
+  "TricepExtensionLow" : "2016-05-03T16:41:47.134Z",
+  "TricepExtensionMedium" : "2016-05-03T16:43:33.955Z",
   "SquatHigh" : "2016-05-03T16:21:38.206Z",
-  "TricepHigh" : "2016-05-03T16:44:27.228Z",
-  "CurlsMedium" : "2016-05-03T16:38:56.987Z",
+  "TricepExtensionHigh" : "2016-05-03T16:44:27.228Z",
+  "CurlMedium" : "2016-05-03T16:38:56.987Z",
   "BenchLow" : "2016-05-03T16:23:21.873Z"
 }

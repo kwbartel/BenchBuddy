@@ -53,7 +53,6 @@
     [self.startStopButton setEnabled: YES];
 }
 
-
 /* If one or both peripherals disconnect
         => Tell all peripherals to stop collecting data
         => Clear all sensor readings that were taken for the current exercise
