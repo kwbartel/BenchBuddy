@@ -18,11 +18,9 @@
 
 @import CoreBluetooth;
 
-
 static id _instance;
 @implementation SensorModel {
 }
-
 
 -(id) init {
     self = [super init];
@@ -31,8 +29,13 @@ static id _instance;
         self.shouldScan = false;
         self.message = @"";
         self.sensorReadings = [[NSArray alloc] init];
-        self.leftSensorReadings = [[NSArray alloc] init];
-        self.rightSensorReadings = [[NSArray alloc] init];
+        
+        self.leftSensorReadings = [[NSMutableArray alloc] init];
+        self.rightSensorReadings = [[NSMutableArray alloc] init];
+        
+        self.tmpLeftSensorReadings = [[NSMutableArray alloc] init];
+        self.tmpRightSensorReadings = [[NSMutableArray alloc] init];
+        
         self.peripherals = [[NSMutableArray alloc] init];
         self.rxCharacteristics = [[NSMutableArray alloc] init];
         self.readyPeripherals = 0;
@@ -52,21 +55,22 @@ static id _instance;
     self.currentPeripheral = peripheral;
     peripheral.delegate = self;
     [self.peripherals addObject: peripheral];
-    
     if ([self.peripherals count] == MAX_PERIPHERALS) {
+    NSArray* connectedPeripherals =  [central retrieveConnectedPeripheralsWithServices:[NSArray arrayWithObject:[CBUUID UUIDWithString:@RBL_SERVICE_UUID]]];
         for (int i = 0; i < [self.peripherals count]; i++) {
-            [central connectPeripheral: self.peripherals[i]
-                               options:[NSDictionary
-                                        dictionaryWithObject:[NSNumber numberWithBool:YES]
-                                        forKey:CBConnectPeripheralOptionNotifyOnDisconnectionKey]];
+            if (![connectedPeripherals containsObject:self.peripherals[i]]) {
+                [central connectPeripheral: self.peripherals[i]
+                                   options:[NSDictionary
+                                            dictionaryWithObject:[NSNumber numberWithBool:YES]
+                                            forKey:CBConnectPeripheralOptionNotifyOnDisconnectionKey]];
+            }
         }
     }
-
     NSLog(@"didDiscoverPeripheral...");
 }
 
 // Task 3
-- (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral {
+- (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *) peripheral {
     [peripheral discoverServices:nil];
     NSLog(@"didConnectPeripheral...");
 }
@@ -75,14 +79,16 @@ static id _instance;
                  error:(NSError *)error {
     self.currentPeripheral = nil;
     [self.peripherals removeObject:peripheral];
-    //self.sensorReadings = [[NSArray alloc] init];
-    self.message = @"";
+    
+    if (self.readyPeripherals > 0) {
+        self.readyPeripherals--;
+    }
+    [self.delegate peripheralsForceDisconnected];
     [central scanForPeripheralsWithServices:[NSArray arrayWithObject:[CBUUID UUIDWithString:@RBL_SERVICE_UUID]] options:nil];
     NSLog(@"didDisconnectPeripheral...");
 }
 
-- (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral
-                 error:(NSError *)error {
+- (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
     self.currentPeripheral = nil;
     [self.peripherals removeObject:peripheral];
     NSLog(@"didFailToConnectPeripheral...");
@@ -96,8 +102,8 @@ static id _instance;
     }
 }
 
-//Taskl 4 (b)
-- (void)peripheral:(CBPeripheral *)peripheral
+//Taskl 4(b)
+- (void) peripheral:(CBPeripheral *)peripheral
 didDiscoverCharacteristicsForService:(CBService *)service
              error:(NSError *)error {
     NSLog(@"didDiscoverIncludedServicesForService...");
@@ -106,20 +112,13 @@ didDiscoverCharacteristicsForService:(CBService *)service
             if ([[[c UUID] UUIDString] isEqualToString:@RBL_CHAR_TX_UUID]) {
                 [peripheral setNotifyValue:YES forCharacteristic:c];
             }
-            //if ([[[c UUID] UUIDString] isEqualToString:@RBL_CHAR_RX_UUID]) {
-              //  [peripheral writeValue:[@"Y" dataUsingEncoding:NSUTF8StringEncoding] forCharacteristic:c type:CBCharacteristicWriteWithoutResponse];
-            //}
-            /*
-            if ([[[c UUID] UUIDString] isEqualToString:@RBL_CHAR_RX_UUID]) {
-                [self.rxCharacteristics addObject: c];
-            }
-             */
         }
         self.readyPeripherals += 1;
+        if (self.readyPeripherals == MAX_PERIPHERALS) {
+            [self.delegate peripheralsReadyForDataCollection];
+        }
     }
-    if (self.readyPeripherals == MAX_PERIPHERALS) {
-        [self.delegate peripheralsReadyForDataCollection];
-    }
+    
     NSLog(@"Discover characteristics for service...");
 }
 
@@ -134,7 +133,7 @@ didDiscoverCharacteristicsForService:(CBService *)service
                     }
                 }
             }
-       }
+        }
     }
 }
 
@@ -159,12 +158,15 @@ didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
         short gy = data[11] | (data[12] << 8);
         short gz = data[13] | (data[14] << 8);
         NSArray *gyroReadings = @[[NSNumber numberWithShort:gx], [NSNumber numberWithShort:gy], [NSNumber numberWithShort:gz]];
-
+        NSDate* date = [NSDate date];
         SensorReading *reading = [[SensorReading alloc] initWithReadingsAccel:accelReadings andGyro:gyroReadings atTime: [NSDate date] andSensorId: peripheral.name];
+        
         if ([reading.sensorId isEqualToString:@"LC"]) {
-            _leftSensorReadings = [_leftSensorReadings arrayByAddingObject:reading];
+           // _leftSensorReadings = [_leftSensorReadings arrayByAddingObject:reading];
+            [_tmpLeftSensorReadings addObject:reading];
         } else if ([reading.sensorId isEqualToString:@"RC"]) {
-            _rightSensorReadings = [_rightSensorReadings arrayByAddingObject:reading];
+            //_rightSensorReadings = [_rightSensorReadings arrayByAddingObject:reading];
+            [_tmpRightSensorReadings addObject:reading];
         }
         _sensorReadings = [_sensorReadings arrayByAddingObject:reading];
     }

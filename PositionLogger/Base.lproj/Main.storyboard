@@ -18,8 +18,17 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="Click to toggle recording" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Uc5-QJ-BRF">
+                                <rect key="frame" x="0.0" y="143" width="320" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="bgE-cX-gCy"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Workout Data Logger" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jNZ-UQ-NGD">
-                                <rect key="frame" x="0.0" y="28" width="320" height="64"/>
+                                <rect key="frame" x="0.0" y="20" width="320" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="21" id="Mci-zZ-Q1U"/>
                                 </constraints>
@@ -35,7 +44,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gUb-jQ-7wN">
-                                <rect key="frame" x="52" y="262" width="216" height="30"/>
+                                <rect key="frame" x="52" y="264" width="216" height="30"/>
                                 <state key="normal" title="Email Log File"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
@@ -50,10 +59,10 @@
                                 </connections>
                             </button>
                             <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="3ZX-d9-vg4">
-                                <rect key="frame" x="76" y="234" width="20" height="20"/>
+                                <rect key="frame" x="77" y="206" width="20" height="20"/>
                             </activityIndicatorView>
                             <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZFo-aY-i2m">
-                                <rect key="frame" x="52" y="307" width="216" height="30"/>
+                                <rect key="frame" x="52" y="302" width="216" height="30"/>
                                 <state key="normal" title="Clear Log File"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
@@ -67,18 +76,31 @@
                                     <action selector="hitClearButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="5pJ-vw-lRh"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="Click to toggle recording" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Uc5-QJ-BRF">
-                                <rect key="frame" x="0.0" y="143" width="320" height="21"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="21" id="bgE-cX-gCy"/>
-                                </constraints>
+                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="h1q-ms-HXj">
+                                <rect key="frame" x="102" y="360" width="120" height="30"/>
+                                <state key="normal" title="End Workout "/>
+                                <connections>
+                                    <action selector="endWorkoutButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Z3M-Gw-x08"/>
+                                </connections>
+                            </button>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Y5k-D9-7VR">
+                                <rect key="frame" x="132" y="100" width="97" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="Exercise: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YwT-aj-8x4">
+                                <rect key="frame" x="51" y="103" width="73" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eWL-Q2-9ES">
+                                <rect key="frame" x="251" y="100" width="51" height="31"/>
+                            </switch>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="Y5k-D9-7VR" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="0Lc-dX-GLD"/>
                             <constraint firstItem="jNZ-UQ-NGD" firstAttribute="top" secondItem="AQN-T1-kYl" secondAttribute="bottom" constant="51" id="1Gw-wh-xYi"/>
                             <constraint firstAttribute="trailing" secondItem="jNZ-UQ-NGD" secondAttribute="trailing" id="2S3-z4-iPP"/>
                             <constraint firstItem="3ZX-d9-vg4" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="60" id="6Lq-Sk-1Ha"/>
@@ -86,18 +108,26 @@
                             <constraint firstItem="ZFo-aY-i2m" firstAttribute="trailing" secondItem="gUb-jQ-7wN" secondAttribute="trailing" id="9L1-lz-6UT"/>
                             <constraint firstItem="xbk-aA-aGR" firstAttribute="leading" secondItem="3ZX-d9-vg4" secondAttribute="trailing" constant="2" id="A9B-re-IXy"/>
                             <constraint firstItem="gUb-jQ-7wN" firstAttribute="top" secondItem="xbk-aA-aGR" secondAttribute="bottom" constant="47" id="Dcl-yE-GJv"/>
+                            <constraint firstItem="YwT-aj-8x4" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="IsT-Tl-PgM"/>
+                            <constraint firstItem="YwT-aj-8x4" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="LYk-gf-bdx"/>
                             <constraint firstItem="gUb-jQ-7wN" firstAttribute="centerX" secondItem="xbk-aA-aGR" secondAttribute="centerX" id="OQe-zw-bZ1"/>
                             <constraint firstItem="xbk-aA-aGR" firstAttribute="top" secondItem="Uc5-QJ-BRF" secondAttribute="bottom" constant="18" id="VYC-iW-gPS"/>
                             <constraint firstItem="Uc5-QJ-BRF" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="ZHw-L3-pXV"/>
                             <constraint firstItem="gUb-jQ-7wN" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="36" id="Zcq-6L-ezL"/>
                             <constraint firstItem="Uc5-QJ-BRF" firstAttribute="centerX" secondItem="xbk-aA-aGR" secondAttribute="centerX" id="Zk7-eC-wj9"/>
+                            <constraint firstItem="h1q-ms-HXj" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="ZxY-nE-tZV"/>
                             <constraint firstItem="ZFo-aY-i2m" firstAttribute="leading" secondItem="gUb-jQ-7wN" secondAttribute="leading" id="ddG-4h-fZV"/>
+                            <constraint firstItem="YwT-aj-8x4" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="geB-g6-P9J"/>
+                            <constraint firstItem="YwT-aj-8x4" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="51" id="hAR-qk-uNR"/>
                             <constraint firstItem="Uc5-QJ-BRF" firstAttribute="leading" secondItem="jNZ-UQ-NGD" secondAttribute="leading" id="jbW-VB-Iqm"/>
                             <constraint firstItem="Uc5-QJ-BRF" firstAttribute="trailing" secondItem="jNZ-UQ-NGD" secondAttribute="trailing" id="sWd-9G-xvF"/>
                             <constraint firstItem="ZFo-aY-i2m" firstAttribute="top" secondItem="gUb-jQ-7wN" secondAttribute="bottom" constant="8" id="t8g-k6-Fkx"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="endWorkoutButton" destination="h1q-ms-HXj" id="hMI-kT-WHU"/>
+                        <outlet property="exerciseName" destination="Y5k-D9-7VR" id="o7O-P5-dvi"/>
+                        <outlet property="includeExercise" destination="eWL-Q2-9ES" id="bKV-OX-GOS"/>
                         <outlet property="recordingIndicator" destination="3ZX-d9-vg4" id="B6X-jG-uxl"/>
                         <outlet property="startStopButton" destination="xbk-aA-aGR" id="obg-bV-Fvx"/>
                     </connections>

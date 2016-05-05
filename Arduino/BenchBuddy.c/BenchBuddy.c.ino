@@ -106,15 +106,18 @@ void loop()
 
   if ( ble_connected() ) {
     if (ble_available()) {
-      if (ble_read() == 'Y') {
+      Serial.println("Data available");
+      char command = ble_read();
+      if (command == 'Y') {
         digitalWrite(13,HIGH);
         collectingData = true;
-      } else if (ble_read() == 'N') {
+      } else if (command == 'N') {
         digitalWrite(13,LOW);
         collectingData = false;
       }
     }
   }
+  
 
 
   ble_do_events();

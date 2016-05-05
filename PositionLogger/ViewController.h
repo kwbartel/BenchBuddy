@@ -15,7 +15,12 @@
 
 @property IBOutlet UIButton *startStopButton;
 @property IBOutlet UIActivityIndicatorView *recordingIndicator;
+@property (weak, nonatomic) IBOutlet UIButton *endWorkoutButton;
+@property (weak, nonatomic) IBOutlet UITextField *exerciseName;
+@property (weak, nonatomic) IBOutlet UISwitch *includeExercise;
 
+
+-(IBAction)endWorkoutButton:(UIButton *)sender;
 -(IBAction)hitRecordStopButton:(UIButton *)b;
 -(IBAction)hitClearButton:(UIButton *)b;
 -(IBAction)emailLogFile:(UIButton *)b;
