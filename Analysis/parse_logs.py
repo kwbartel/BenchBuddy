@@ -4,13 +4,13 @@ import pandas as pd
 import math
 import json
 
-import datetime
+import datetime 
 from dateutil.parser import parse
 
 # Get values from csv, put into raw_values
 
 
-testSubjectId = "5"
+testSubjectId = "3"
 
 file = "curl/katie_curl1.csv"
 exerciseEndTimesPath = "TrainingData/" + testSubjectId + "/ExerciseEndTimes.json"
@@ -28,7 +28,7 @@ parsedEndTimes = dict()
 # i, startExerciseRow = next(raw_data.iterrows())
 
 # currentExerciseId = 0
-# #Iterate over each row in workout, partitioning into seperate exercises
+# #Iterate over each row in workout, partitioning into seperate exercises 
 # for i, row in raw_data.iterrows():
 #   tdelta = parse(row['LTime'])  - parse(lastRow['LTime'])
 #   if tdelta > datetime.timedelta(seconds=1):

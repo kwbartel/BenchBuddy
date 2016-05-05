@@ -118,7 +118,6 @@ didDiscoverCharacteristicsForService:(CBService *)service
             [self.delegate peripheralsReadyForDataCollection];
         }
     }
-    
     NSLog(@"Discover characteristics for service...");
 }
 
@@ -158,7 +157,7 @@ didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
         short gy = data[11] | (data[12] << 8);
         short gz = data[13] | (data[14] << 8);
         NSArray *gyroReadings = @[[NSNumber numberWithShort:gx], [NSNumber numberWithShort:gy], [NSNumber numberWithShort:gz]];
-        NSDate* date = [NSDate date];
+
         SensorReading *reading = [[SensorReading alloc] initWithReadingsAccel:accelReadings andGyro:gyroReadings atTime: [NSDate date] andSensorId: peripheral.name];
         
         if ([reading.sensorId isEqualToString:@"LC"]) {
