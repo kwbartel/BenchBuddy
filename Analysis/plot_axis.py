@@ -4,7 +4,7 @@ import pandas as pd
 import math
 
 # Get values from csv, put into raw_values
-file = "curl/katie_curl1.csv"
+file = "flye/kwame_flye.csv"
 vars = [' RAccelX', ' LAccelX', ' RGyroX', ' LGyroX',
         ' RAccelY', ' LAccelY', ' RGyroY', ' LGyroY',
         ' RAccelZ', ' LAccelZ', ' RGyroZ', ' LGyroZ' ]
