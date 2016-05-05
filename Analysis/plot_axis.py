@@ -4,7 +4,7 @@ import pandas as pd
 import math
 import json
 
-import datetime 
+import datetime
 from dateutil.parser import parse
 
 # Get values from csv, put into raw_values
@@ -28,7 +28,7 @@ parsedEndTimes = dict()
 # i, startExerciseRow = next(raw_data.iterrows())
 
 # currentExerciseId = 0
-# #Iterate over each row in workout, partitioning into seperate exercises 
+# #Iterate over each row in workout, partitioning into seperate exercises
 # for i, row in raw_data.iterrows():
 #   tdelta = parse(row['LTime'])  - parse(lastRow['LTime'])
 #   if tdelta > datetime.timedelta(seconds=1):
@@ -74,8 +74,6 @@ sum = 0
 for exercise in exerciseRawValueMap.keys():
   sum += len(exerciseRawValueMap[exercise])
 print sum
-
-
 
 axis_labels = ['ax', 'gx', 'ay', 'gy', 'az', 'gz']
 
