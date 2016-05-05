@@ -5,19 +5,50 @@ import math
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import confusion_matrix
 import sklearn.tree as tree
+from os import listdir
+from os.path import isfile, join
+from random import shuffle
 
-files = ["bench/kwame_bench.csv", "bench/katie_bench1.csv", "curl/kwame_curl.csv", "curl/katie_curl1.csv", "row/kwame_row.csv", "row/katie_row1.csv", "flye/kwame_flye.csv", "flye/katie_flye1.csv"]
-classes = [0,0,1,1,2,2,3,3]
+# Names of exercises, list of what subject numbers to take data from
+class_names = ["Squat", "Bench", "Row", "Curl", "Tricep"]
+subjects = range(5)
 
-test_files = ["bench/katie_bench2.csv", "curl/katie_curl2.csv", "row/katie_row2.csv", "flye/katie_flye2.csv"]
-test_classes = [0, 1, 2, 3]
+# Collect all files and corresponding labels from desired subjects folders
+files = []
+labels = []
+for subject_id in subjects:
+    # Get list of all files in subject's folder
+    path = join('./TrainingData/', str(subject_id))
+    subject_files = [f for f in listdir(path) if isfile(join(path, f))]
+    for f in subject_files:
+        for c in class_names:
+            if f.find(c) > -1:
+                files.append(join(path, f))
+                labels.append(class_names.index(c))
+
+# Shuffle file lists in random order
+files_shuf = []
+labels_shuf = []
+index_shuf = range(len(files))
+shuffle(index_shuf)
+for i in index_shuf:
+    files_shuf.append(files[i])
+    labels_shuf.append(labels[i])
+
+# Split data into train and test
+print len(files)
+split = .7 # Fraction of data set to use as training
+split_idx = int(len(files) * split)
+train_files = files_shuf[:split_idx]
+train_classes = labels_shuf[:split_idx]
+test_files = files_shuf[split_idx:]
+test_classes = labels_shuf[split_idx:]
 
 def make_features(csv_files, save_graphs=False):
     idx = 0
     metrics = []
     for file in csv_files:
         met = []
-        print file
 
         # Load variables
         vars = [' RAccelX', ' LAccelX', ' RGyroX', ' LGyroX',
@@ -92,12 +123,11 @@ def make_features(csv_files, save_graphs=False):
     return metrics
 
 # get features for training set
-train_features = make_features(files)
-print len(train_features[0])
+train_features = make_features(train_files)
 
 #train decision tree classifier on data
 clf = DecisionTreeClassifier(random_state=0,max_depth=3)
-clf.fit(train_features, classes)
+clf.fit(train_features, train_classes)
 
 # get test set results
 test_features = make_features(test_files)
