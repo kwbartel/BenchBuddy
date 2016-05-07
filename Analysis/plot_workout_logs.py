@@ -5,7 +5,7 @@ import math
 import json
 
 
-testSubjectId = "3"
+testSubjectId = "1"
 
 exerciseEndTimesPath = "TrainingData/" + testSubjectId + "/ExerciseEndTimes.json"
 exerciseEndTimes = json.load(open(exerciseEndTimesPath))

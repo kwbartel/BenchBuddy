@@ -35,7 +35,6 @@ print len(df1)
 exerciseRawValueMap = dict()
 
 #For each exercise, create dataframe with elements before the corresponding end time
-#curExercise = sortedExerciseEndTimes.keys()[0]
 
 startTime = df1['LTime'][0]
 print sortedExerciseEndTimes
