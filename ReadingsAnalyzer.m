@@ -37,16 +37,15 @@ static id _instance;
     
     NSArray *filteredAccelValues = [self filterAccelerationData:rawXAccelValues];
     
-    //NSNumber *zeroCrossings = [self countZeroCrossings:filteredAccelValues];
-    
-    return zerocrossings / 2;
+    int zeroCrossings = [self countZeroCrossings:filteredAccelValues];
+    return zeroCrossings / 2;
 }
 
 - (NSArray*) filterAccelerationData: (NSArray*) rawValues {
     
     //Implement low pass filter
-    double rate = 10;
-    double freq = 1.0;
+    double rate = 10; //Sampling Arduino at approximately 10 HZ
+    double freq = 1.0; // Empirically determined cutoff frequency ~ 1.0
     double dt = 1.0 / rate;
     double RC = 1.0 / freq;
     double filterConstant = dt / (dt + RC);
@@ -59,14 +58,17 @@ static id _instance;
     return filteredValues;
 }
 
-- (NSNumber*) countZeroCrossings: (NSArray*) signal {
-    NSNumber lastValue = signal[0];
+- (int) countZeroCrossings: (NSArray*) signal {
+    int lastValue = (int) signal[0];
     int numZeroCrossings = 0;
     for (int i = 1; i < [signal count]; i++) {
-        NSNumber currentValue = signal[i];
+        int currentValue = (int) signal[i];
         //check if we crossed zero and increment
+        if (ABS(currentValue + lastValue) < MAX(ABS(currentValue), ABS(lastValue))) {
+            numZeroCrossings++;
+        }
         
     }
-    
+    return numZeroCrossings;
 }
 @end

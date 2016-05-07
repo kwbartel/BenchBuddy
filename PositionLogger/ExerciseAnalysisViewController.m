@@ -53,7 +53,6 @@
         // Count reps completed
         NSInteger completedReps = [[ReadingsAnalyzer instance] countRepetitionsFromLeft: _leftSensorReadings  andRight:_rightSensorReadings];
         
-        
         //Perform activity recognition
         
     }
