@@ -18,6 +18,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *endWorkoutButton;
 @property (weak, nonatomic) IBOutlet UITextField *exerciseName;
 @property (weak, nonatomic) IBOutlet UISwitch *includeExercise;
+@property (weak, nonatomic) IBOutlet UIButton *transitionButton;
 
 
 -(IBAction)endWorkoutButton:(UIButton *)sender;

@@ -12,7 +12,9 @@
 
 
 @interface ReadingsAnalyzer : NSObject
++(ReadingsAnalyzer *)instance;
 
+-(NSInteger) countRepetitionsFromLeft:(NSArray *)leftSensorReadings andRight: (NSArray*) rightSensorReadings;
 
 @end
 

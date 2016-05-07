@@ -9,7 +9,26 @@
 #import <Foundation/Foundation.h>
 #import "ReadingsAnalyzer.h"
 
+
+static id _instance;
 @implementation ReadingsAnalyzer {
+}
+
+-(id) init {
+    self = [super init];
+    if (self) {
+        //TODO: Initialize instance variables
+    }
+    return self;
+}
+
+-(NSInteger) countRepetitionsFromLeft:(NSArray *)leftSensorReadings andRight:(NSArray *)rightSensorReadings {
+    
+    
+    
+    
+    
+    return 0;
 }
 
 @end

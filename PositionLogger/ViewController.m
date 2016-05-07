@@ -33,8 +33,12 @@
     
     self.endWorkoutButton.layer.borderWidth = 1.0;
     self.endWorkoutButton.layer.cornerRadius = 5.0;
+    
     [self.endWorkoutButton setEnabled: NO];
     
+    
+    self.transitionButton.layer.borderWidth = 1.0;
+    self.transitionButton.layer.cornerRadius = 5.0;
     //Open CSV file
     _f  = [self openFileForWriting];
     
