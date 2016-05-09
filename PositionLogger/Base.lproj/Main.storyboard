@@ -61,21 +61,6 @@
                             <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="3ZX-d9-vg4">
                                 <rect key="frame" x="77" y="206" width="20" height="20"/>
                             </activityIndicatorView>
-                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZFo-aY-i2m">
-                                <rect key="frame" x="52" y="302" width="216" height="30"/>
-                                <state key="normal" title="Clear Log File"/>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
-                                        <integer key="value" value="1"/>
-                                    </userDefinedRuntimeAttribute>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                        <integer key="value" value="5"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
-                                <connections>
-                                    <action selector="hitClearButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="5pJ-vw-lRh"/>
-                                </connections>
-                            </button>
                             <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="h1q-ms-HXj">
                                 <rect key="frame" x="102" y="360" width="120" height="30"/>
                                 <state key="normal" title="End Workout "/>
@@ -102,6 +87,21 @@
                                 <state key="normal" title="Real Time Exercise"/>
                                 <connections>
                                     <segue destination="pew-l7-Fag" kind="modal" id="Oiv-qn-3ib"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZFo-aY-i2m">
+                                <rect key="frame" x="52" y="302" width="216" height="30"/>
+                                <state key="normal" title="Clear Log File"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
+                                        <integer key="value" value="1"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="5"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="hitClearButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="5pJ-vw-lRh"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -177,10 +177,36 @@
                                     <action selector="startExercise:" destination="pew-l7-Fag" eventType="touchUpInside" id="Mb1-i6-IpS"/>
                                 </connections>
                             </button>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Hau-xk-7ZY">
+                                <rect key="frame" x="130" y="237" width="50" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="repetitions of " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BcO-3f-gpn">
+                                <rect key="frame" x="102" y="311" width="106" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="AUU-lR-NxB">
+                                <rect key="frame" x="87" y="386" width="135" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="You've completed " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h4s-JU-N0Y">
+                                <rect key="frame" x="87" y="175" width="156" height="34"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="AUU-lR-NxB" firstAttribute="centerX" secondItem="LMg-Bj-blC" secondAttribute="centerX" id="1OI-64-PIB"/>
                             <constraint firstItem="XVx-JE-DWM" firstAttribute="centerX" secondItem="LMg-Bj-blC" secondAttribute="centerX" id="57s-AR-ZBN"/>
+                            <constraint firstItem="h4s-JU-N0Y" firstAttribute="centerX" secondItem="LMg-Bj-blC" secondAttribute="centerX" id="N9c-qL-NMx"/>
+                            <constraint firstItem="Hau-xk-7ZY" firstAttribute="centerX" secondItem="LMg-Bj-blC" secondAttribute="centerX" id="Xef-r4-k8x"/>
+                            <constraint firstItem="BcO-3f-gpn" firstAttribute="centerX" secondItem="LMg-Bj-blC" secondAttribute="centerX" id="alM-pT-5pv"/>
                             <constraint firstAttribute="trailingMargin" secondItem="kv4-me-ADG" secondAttribute="trailing" id="bxR-kV-ziM"/>
                             <constraint firstItem="kv4-me-ADG" firstAttribute="top" secondItem="XVx-JE-DWM" secondAttribute="bottom" constant="32" id="eIO-ee-0eR"/>
                             <constraint firstItem="cet-vp-JCR" firstAttribute="leading" secondItem="LMg-Bj-blC" secondAttribute="leadingMargin" constant="5" id="lnG-lA-pxJ"/>
@@ -189,7 +215,11 @@
                     </view>
                     <navigationItem key="navigationItem" id="hXI-fq-9XD"/>
                     <connections>
+                        <outlet property="completedLabel" destination="h4s-JU-N0Y" id="JcY-HM-jzf"/>
                         <outlet property="endExerciseButton" destination="kv4-me-ADG" id="wkq-db-ik1"/>
+                        <outlet property="recognizedActivity" destination="AUU-lR-NxB" id="Sp3-ka-W6e"/>
+                        <outlet property="repetitionCount" destination="Hau-xk-7ZY" id="JMb-1v-4WA"/>
+                        <outlet property="repetitionLabel" destination="BcO-3f-gpn" id="7dH-8f-mm7"/>
                         <outlet property="startExerciseButton" destination="cet-vp-JCR" id="ahy-of-ikk"/>
                     </connections>
                 </viewController>

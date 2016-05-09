@@ -69,6 +69,7 @@ static id _instance;
         rawZValues[j] -= meanZ;
     }
     
+    
     //Low pass filter raw acceleration values
     float* filteredXValues = [self filterAccelerationData:rawXValues length:readingsCount];
     float* filteredYValues = [self filterAccelerationData:rawYValues length:readingsCount];
@@ -83,6 +84,7 @@ static id _instance;
     int bestXY = MAX(zeroXCrossings, zeroYCrossings);
     int bestZeroCrossingCount = MAX(bestXY, zeroZCrossings);
     
+    
     // Free memory
     free(rawXValues); free(rawYValues); free(rawZValues);
     free(filteredXValues); free(filteredYValues); free(filteredZValues);
@@ -92,12 +94,12 @@ static id _instance;
 }
 /*
     Low pass filter a set of sensor readings
-    @param{rawValues} unfiltered accelerometer readingss
+    @param{rawValues} unfiltered accelerometer readings
 */
 - (float*) filterAccelerationData: (float*)rawValues length: (unsigned long) count {
     
     //Implement low pass filter
-    double rate = 4; //Sampling Arduino at approximately 10 HZ
+    double rate = 6; //Sampling Arduino at approximately 10 HZ
     double freq = 0.8; // Empirically determined cutoff frequency ~ 1.0
     double dt = 1.0 / rate;
     double RC = 1.0 / freq;

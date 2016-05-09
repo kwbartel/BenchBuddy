@@ -15,14 +15,12 @@
 
 @interface ExerciseAnalysisViewController: UIViewController
 
-/*
-@property (weak, nonatomic) IBOutlet UIButton *startExerciseButton;
-
-@property (weak, nonatomic) IBOutlet UIButton *endExerciseButton;
-*/
-
 @property (weak, nonatomic) IBOutlet UIButton *startExerciseButton;
 @property (weak, nonatomic) IBOutlet UIButton *endExerciseButton;
+@property (weak, nonatomic) IBOutlet UILabel *completedLabel;
+@property (weak, nonatomic) IBOutlet UITextField *repetitionCount;
+@property (weak, nonatomic) IBOutlet UILabel *repetitionLabel;
+@property (weak, nonatomic) IBOutlet UITextField *recognizedActivity;
 
 - (IBAction)startExercise:(id)sender;
 - (IBAction)endExercise:(id)sender;
