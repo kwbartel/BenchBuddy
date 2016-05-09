@@ -11,14 +11,14 @@
 #import "ReadingsAnalyzer.h"
 
 @implementation ExerciseAnalysisViewController {
-    NSArray* _leftSensorReadings;
-    NSArray* _rightSensorReadings;
     BOOL _isRecording;
+    ReadingsAnalyzer* _readingsAnalyzer;
 }
 
 
 - (void) viewDidLoad {
     [super viewDidLoad];
+    _readingsAnalyzer = [[ReadingsAnalyzer alloc] init];
     
     self.startExerciseButton.layer.borderWidth = 1.0;
     self.startExerciseButton.layer.cornerRadius = 5.0;
@@ -34,7 +34,8 @@
     if (!_isRecording) {
         //Signal to Arduinos to start recording
         [[SensorModel instance] sendSignal:@"Y"];
-        [self.startExerciseButton setEnabled: NO];
+        [self.startExerciseButton setEnabled:NO];
+        [self.endExerciseButton setEnabled:YES];
         _isRecording = TRUE;
     }
 }
@@ -45,16 +46,19 @@
         [[SensorModel instance] sendSignal:@"N"];
         
         //save collected sensor readings
-        _leftSensorReadings = [[SensorModel instance] tmpLeftSensorReadings];
-        _rightSensorReadings = [[SensorModel instance] tmpRightSensorReadings];
+
+        NSArray* _leftSensorReadings = [[SensorModel instance] tmpLeftSensorReadings];
+        NSArray* _rightSensorReadings = [[SensorModel instance] tmpRightSensorReadings];
         [self.endExerciseButton setEnabled:NO];
+        [self.startExerciseButton setEnabled:YES];
         _isRecording = FALSE;
         
         // Count reps completed
-        NSInteger completedReps = [[ReadingsAnalyzer instance] countRepetitionsFromLeft: _leftSensorReadings  andRight:_rightSensorReadings];
+
+        int completedReps = [[ReadingsAnalyzer instance] countRepetitionsFromLeft: _leftSensorReadings  andRight:_rightSensorReadings];
         
         //Perform activity recognition
-        
+        NSLog(@"%f", completedReps);
     }
 }
 
