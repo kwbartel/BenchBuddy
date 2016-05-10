@@ -91,6 +91,11 @@ def make_features(csv_files, save_graphs=False):
 class_names = ["Squat", "Bench", "Row", "Curl", "Tricep"]
 subjects = range(5)
 
+#get features for training set, train CLF on features
+train_features = make_features(train_files)
+clf = DecisionTreeClassifier(random_state=0, max_depth=4)
+clf.fit(train_features, train_classes)
+
 # Collect all files and corresponding labels from desired subjects folders
 files = []
 labels = []

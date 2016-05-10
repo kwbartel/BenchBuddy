@@ -33,8 +33,8 @@
 @property(atomic) NSMutableArray *leftSensorReadings;
 @property(atomic) NSMutableArray *rightSensorReadings;
 
-@property NSMutableArray *tmpLeftSensorReadings;
-@property NSMutableArray *tmpRightSensorReadings;
+@property (atomic, strong) NSMutableArray *tmpLeftSensorReadings;
+@property (atomic, strong) NSMutableArray *tmpRightSensorReadings;
 
 @property NSMutableArray *peripherals;
 @property NSMutableArray *rxCharacteristics;
