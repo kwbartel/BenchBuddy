@@ -9,42 +9,6 @@ from os import listdir
 from os.path import isfile, join
 from random import shuffle
 
-# Names of exercises, list of what subject numbers to take data from
-class_names = ["Squat", "Bench", "Row", "Curl", "Tricep"]
-subjects = range(5)
-
-# Collect all files and corresponding labels from desired subjects folders
-files = []
-labels = []
-for subject_id in subjects:
-    # Get list of all files in subject's folder
-    path = join('./TrainingData/', str(subject_id))
-    subject_files = [f for f in listdir(path) if isfile(join(path, f))]
-    for f in subject_files:
-        for c in class_names:
-            if f.find(c) > -1:
-                files.append(join(path, f))
-                labels.append(class_names.index(c))
-
-# Shuffle file lists in random order
-files_shuf = []
-labels_shuf = []
-index_shuf = range(len(files))
-shuffle(index_shuf)
-for i in index_shuf:
-    files_shuf.append(files[i])
-    labels_shuf.append(labels[i])
-
-# Split data into train and test
-print len(files), "data files"
-split = .7 # Fraction of data set to use as training
-split_idx = int(len(files) * split)
-print split_idx, "used for training"
-train_files = files_shuf[:split_idx]
-train_classes = labels_shuf[:split_idx]
-test_files = files_shuf[split_idx:]
-test_classes = labels_shuf[split_idx:]
-
 def make_features(csv_files, save_graphs=False):
     idx = 0
     metrics = []
@@ -81,7 +45,7 @@ def make_features(csv_files, save_graphs=False):
             met.append(mean)  #mean of accel
             #met.append(plt.mlab.entropy(power, 20)) #entropy of power, binned into 20 bins
             #met.append(meanpower)  #average of power
-            met.append(np.std(power)) #std dev of power
+            #met.append(np.std(power)) #std dev of power
             #met.append(np.max(power))  #maximum power
             #met.append(freq[np.argmax(power)])  #maximum frequency
         metrics.append(met)
@@ -123,20 +87,60 @@ def make_features(csv_files, save_graphs=False):
 
     return metrics
 
-# get features for training set, train CLF on features
-train_features = make_features(train_files)
-clf = DecisionTreeClassifier(random_state=0,max_depth=4)
-clf.fit(train_features, train_classes)
+# Names of exercises, list of what subject numbers to take data from
+class_names = ["Squat", "Bench", "Row", "Curl", "Tricep"]
+subjects = range(5)
 
-# get test set features and predictions
-test_features = make_features(test_files)
-predictions = clf.predict(test_features)
-correct = np.sum(np.equal(test_classes, predictions)) / float(len(test_classes))
-print correct, "accuracy rate"
+# Collect all files and corresponding labels from desired subjects folders
+files = []
+labels = []
+for subject_id in subjects:
+    # Get list of all files in subject's folder
+    path = join('./TrainingData/', str(subject_id))
+    subject_files = [f for f in listdir(path) if isfile(join(path, f))]
+    for f in subject_files:
+        for c in class_names:
+            if f.find(c) > -1:
+                files.append(join(path, f))
+                labels.append(class_names.index(c))
 
-# confusion matrix
-cm = confusion_matrix(test_classes, predictions)
-print cm
+avg_accuracy = 0
+for i in range(5):
+    # Shuffle file lists in random order
+    files_shuf = []
+    labels_shuf = []
+    index_shuf = range(len(files))
+    shuffle(index_shuf)
+    for i in index_shuf:
+        files_shuf.append(files[i])
+        labels_shuf.append(labels[i])
+
+    # Split data into train and test
+    print len(files), "data files"
+    split = .7 # Fraction of data set to use as training
+    split_idx = int(len(files) * split)
+    print split_idx, "used for training"
+    train_files = files_shuf[:split_idx]
+    train_classes = labels_shuf[:split_idx]
+    test_files = files_shuf[split_idx:]
+    test_classes = labels_shuf[split_idx:]
+
+    # get features for training set, train CLF on features
+    train_features = make_features(train_files)
+    clf = DecisionTreeClassifier(random_state=0,max_depth=4)
+    clf.fit(train_features, train_classes)
+
+    # get test set features and predictions
+    test_features = make_features(test_files)
+    predictions = clf.predict(test_features)
+    correct = np.sum(np.equal(test_classes, predictions)) / float(len(test_classes))
+    print correct, "accuracy rate"
+
+    # confusion matrix
+    cm = confusion_matrix(test_classes, predictions)
+    print cm
+    avg_accuracy += correct
+print "average accuracy", avg_accuracy / 5.0
 
 # save CLF tree
 with open('graph.dot', 'w') as file:
