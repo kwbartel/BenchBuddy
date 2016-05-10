@@ -123,9 +123,9 @@ def make_features(csv_files, save_graphs=False):
 
     return metrics
 
-# get features for training set, train CLF on features
+#get features for training set, train CLF on features
 train_features = make_features(train_files)
-clf = DecisionTreeClassifier(random_state=0,max_depth=4)
+clf = DecisionTreeClassifier(random_state=0, max_depth=4)
 clf.fit(train_features, train_classes)
 
 # get test set features and predictions

@@ -156,6 +156,7 @@
         
         if ([self.includeExercise isOn]) {
             
+            
             //NSDate *currDate = [NSDate date];
             NSArray* tmpLeftReadings = [[SensorModel instance] tmpLeftSensorReadings];
             NSArray* tmpRightReadings = [[SensorModel instance] tmpRightSensorReadings];
@@ -164,11 +165,13 @@
             
             [[[SensorModel instance] rightSensorReadings] addObjectsFromArray:tmpRightReadings];
             
+            // find End time of last received sensor reading
             NSDate *currDate = [[tmpLeftReadings lastObject] time];
             NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
             [dateFormatter setDateFormat:@"yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS'Z'"];
             NSString *dateString = [dateFormatter stringFromDate:currDate];
             
+            //Format exercise end times as JSON
             [_exerciseEndDateMap setValue:dateString forKey:[self.exerciseName text]];
         }
         

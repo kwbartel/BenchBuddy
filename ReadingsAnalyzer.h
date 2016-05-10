@@ -15,7 +15,7 @@
 +(ReadingsAnalyzer *) instance;
 
 -(int) countRepetitionsFromLeft:(NSArray *)leftSensorReadings andRight: (NSArray*) rightSensorReadings;
-
+-(NSString*) recognizeActivityFromLeft:(NSArray*) leftSensorReadings andRight: (NSArray*) rightSensorReadings;
 @end
 
 #endif /* ReadingsAnalyzer_h */
