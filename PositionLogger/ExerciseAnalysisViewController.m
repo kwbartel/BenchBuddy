@@ -15,7 +15,6 @@
     ReadingsAnalyzer* _readingsAnalyzer;
 }
 
-
 - (void) viewDidLoad {
     [super viewDidLoad];
     _readingsAnalyzer = [[ReadingsAnalyzer alloc] init];
@@ -29,7 +28,6 @@
     _isRecording = FALSE;
     [self.endExerciseButton setEnabled: NO];
 }
-
 
 - (IBAction)startExercise:(id)sender {
     if (!_isRecording) {

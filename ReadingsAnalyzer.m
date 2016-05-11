@@ -33,7 +33,7 @@ static id _instance;
     @param {leftSensorReadings} readings from the left peripheral
     @param {rightSensorReadings} readings from the right peripheral
 */
--(NSString*) recognizeActivityFromLeft: (NSArray *) leftSensorReadings andRight: (NSArray *) rightSensorReadings {
+- (NSString*) recognizeActivityFromLeft: (NSArray *) leftSensorReadings andRight: (NSArray *) rightSensorReadings {
     NSArray* leftFeatures = [self extractFeatures:leftSensorReadings];
     NSArray* rightFeatures = [self extractFeatures:rightSensorReadings];
     
