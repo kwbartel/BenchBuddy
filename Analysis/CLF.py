@@ -8,6 +8,7 @@ import sklearn.tree as tree
 from os import listdir
 from os.path import isfile, join
 from random import shuffle
+from sklearn.metrics import f1_score
 
 def make_features(csv_files, save_graphs=False):
     idx = 0
@@ -91,10 +92,10 @@ def make_features(csv_files, save_graphs=False):
 class_names = ["Squat", "Bench", "Row", "Curl", "Tricep"]
 subjects = range(5)
 
-#get features for training set, train CLF on features
-train_features = make_features(train_files)
-clf = DecisionTreeClassifier(random_state=0, max_depth=4)
-clf.fit(train_features, train_classes)
+# #get features for training set, train CLF on features
+# train_features = make_features(train_files)
+# clf = DecisionTreeClassifier(random_state=0, max_depth=4)
+# clf.fit(train_features, train_classes)
 
 # Collect all files and corresponding labels from desired subjects folders
 files = []
@@ -109,8 +110,9 @@ for subject_id in subjects:
                 files.append(join(path, f))
                 labels.append(class_names.index(c))
 
-avg_accuracy = 0
-for i in range(5):
+avg_f1 = 0
+trials = 20
+for i in range(trials):
     # Shuffle file lists in random order
     files_shuf = []
     labels_shuf = []
@@ -140,12 +142,13 @@ for i in range(5):
     predictions = clf.predict(test_features)
     correct = np.sum(np.equal(test_classes, predictions)) / float(len(test_classes))
     print correct, "accuracy rate"
+    f1 = f1_score(test_classes, predictions, average='micro')
 
     # confusion matrix
     cm = confusion_matrix(test_classes, predictions)
     print cm
-    avg_accuracy += correct
-print "average accuracy", avg_accuracy / 5.0
+    avg_f1 += f1
+print "average f1 score", avg_f1 / float(trials)
 
 # save CLF tree
 with open('graph.dot', 'w') as file:
