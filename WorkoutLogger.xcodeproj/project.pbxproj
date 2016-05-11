@@ -130,7 +130,7 @@
 				TargetAttributes = {
 					DB278BAC1C6289680083FD72 = {
 						CreatedOnToolsVersion = 7.2;
-						DevelopmentTeam = EZCPRU3M5V;
+						DevelopmentTeam = MZ7M6TPWLL;
 					};
 				};
 			};
@@ -291,7 +291,7 @@
 				INFOPLIST_FILE = PositionLogger/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = edu.mit.PositionLogger3;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.mit.PositionLogger10;
 				PRODUCT_NAME = WorkoutLogger;
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -307,7 +307,7 @@
 				INFOPLIST_FILE = PositionLogger/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = edu.mit.PositionLogger3;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.mit.PositionLogger10;
 				PRODUCT_NAME = WorkoutLogger;
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
